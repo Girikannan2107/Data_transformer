@@ -90,20 +90,39 @@ python -m spacy download en_core_web_sm
 
 ## 🏃 Running the Application
 
-### Running the Web Server
-Launch the FastAPI uvicorn server:
+### 1. Launch the Web Server
+Launch the FastAPI uvicorn server locally:
 
 ```bash
 python server.py
 ```
 By default, the application runs on **`http://127.0.0.1:8000/`**.
 
-### Interacting with the SPA Dashboard
+### 2. Run Pipeline via Command Line Interface (CLI)
+You can execute the pipeline statelessly for a specific candidate directly from your terminal using `main.py`:
+
+```bash
+# General CLI Command Syntax
+python main.py --candidate <CANDIDATE_ID> --csv <CSV_PATH> --resume <RESUME_PATHS_COMMA_SEPARATED> --github <GITHUB_URLS_COMMA_SEPARATED>
+
+# Example 1: Ingesting a single candidate with one resume
+python main.py --candidate CAND-101 --csv data/recruiter_data.csv --resume data/resume.pdf
+
+# Example 2: Ingesting multiple comma-separated resumes and GitHub profiles
+python main.py --candidate CAND-101 --csv data/recruiter_data.csv --resume data/resume.pdf,data/resume2.pdf --github https://github.com/Girikannan2107,https://github.com/anotheruser
+```
+
+### 3. Interacting with the SPA Dashboard
 1. Open `http://127.0.0.1:8000/` in your browser.
 2. Click **Get Started**.
-3. Drag & drop or browse a **Candidate Resume** (PDF/DOCX) and a **Recruiter CSV Export** (e.g. sample files are inside `tests/` or `data/uploads/`).
-4. Optionally input a **GitHub Profile URL** (leave blank to let the parser extract it from the Resume document links).
-5. Click **Run Candidate Transformation** to view the live, 12-section Candidate Profile visualizer showing Overall Confidence gauges, skills tables, timelines, searchable provenance grids, and execution logs.
+3. **Upload Files**:
+   - Drag & drop or browse one or **multiple candidate resumes** (.pdf / .docx).
+   - Drag & drop or browse the **Recruiter CSV Export** (e.g. `data/recruiter_data.csv`).
+4. **Additional Profiles**: Input one or **multiple comma-separated GitHub URLs** (optional).
+5. **Select Ingestion Mode**:
+   - *Single Candidate Mode*: Runs transformation on the matched candidate and background pre-loads others.
+   - *Multi-Candidate Mode*: Runs transformation for all candidates in parallel and goes directly to the comparison matrix.
+6. Click **Run Candidate Transformation** to visualize the ingested profiles.
 
 ---
 
@@ -112,7 +131,11 @@ By default, the application runs on **`http://127.0.0.1:8000/`**.
 Run the test suite using `pytest` to verify extraction, normalization, merging, entity resolution, and pipeline integration correctness:
 
 ```bash
+# Run all unit tests
 python -m pytest
+
+# Run with verbose logs
+python -m pytest -v
 ```
 
 All 11 tests will execute and verify compliance.
@@ -131,6 +154,7 @@ You can alter the pipeline output without modifying python code by editing `data
 
 ## 🔍 Assumptions & Edge Cases Handled
 
+* **Multi-GitHub Profile Auto-Matching**: Comma-separated GitHub URLs are resolved and automatically matched to candidates based on username/name fields.
 * **Graceful GitHub Rate Limit Degradation**: If the live GitHub API limits requests, the `GitHubExtractor` logs a warning and yields empty data structures, allowing the pipeline to complete successfully using Resume and CSV details.
 * **Path Traversal Protection**: Uploaded filenames are scrubbed and saved using UUID mappings, preventing filesystem directory traversal vulnerabilities (`../../`).
 * **Name & Email Fallbacks**: If the candidate resume fails to map an email address, the matching resolver scans row profiles against name parameters to locate matching entries.
