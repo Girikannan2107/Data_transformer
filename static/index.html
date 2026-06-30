@@ -667,6 +667,70 @@
         .validation-alert.active {
             display: block;
         }
+
+        /* Custom tab styles for split panel */
+        .tab-btn {
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 12px 20px;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            color: var(--primary-light);
+            border-bottom-color: var(--primary-light);
+            background: rgba(109, 40, 217, 0.08);
+            border-radius: 8px 8px 0 0;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Custom switches styling */
+        .switch-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+        }
+        .switch-container label {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .switch-container input[type="checkbox"] {
+            cursor: pointer;
+            accent-color: var(--primary-light);
+            width: 16px;
+            height: 16px;
+        }
+        /* Config chips styling */
+        .config-chip {
+            background: rgba(109, 40, 217, 0.15);
+            border: 1px solid var(--primary-light);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-color);
+        }
     </style>
 </head>
 <body>
@@ -836,148 +900,514 @@
 
     <!-- Page 4: RESULT DASHBOARD PAGE -->
     <div id="page-result" class="page">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; border-bottom: 1px solid var(--card-border); padding-bottom: 20px;">
-            <div>
-                <h2 id="result-cand-name" style="font-size: 28px; font-weight: 800;">Candidate Ingested</h2>
-                <p id="result-cand-id" style="color: var(--text-muted); font-size: 13px; margin-top: 4px;"></p>
+        <!-- Top Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; border-bottom: 1px solid var(--card-border); padding-bottom: 20px; flex-wrap: wrap; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div id="result-avatar" style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-light)); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: white;">👤</div>
+                <div>
+                    <h2 id="result-cand-name" style="font-size: 28px; font-weight: 800;">Candidate Ingested</h2>
+                    <div style="display: flex; align-items: center; gap: 12px; margin-top: 4px; font-size: 13px; color: var(--text-muted); flex-wrap: wrap;">
+                        <span id="result-cand-id">ID: N/A</span>
+                        <span>•</span>
+                        <span id="result-execution-id">Execution: N/A</span>
+                        <span>•</span>
+                        <span id="result-pipeline-status" class="badge" style="background: rgba(16, 185, 129, 0.15); color: var(--success);">Ingestion Complete</span>
+                    </div>
+                </div>
             </div>
-            <div style="display: flex; gap: 12px;">
-                <button class="btn-panel-action" onclick="copyJSON()">📋 Copy JSON</button>
-                <button class="btn-panel-action" style="background: var(--primary); color: white;" onclick="downloadJSON()">📥 Download JSON</button>
-                <button class="btn-panel-action" style="background: transparent; border-color: var(--card-border); color: var(--text-color);" onclick="navigateToHome()">🔄 Ingest Another</button>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <span id="result-overall-confidence-badge" class="badge" style="font-size: 14px; padding: 6px 12px; font-weight: bold;">Score: 0.0</span>
+                <button class="btn-panel-action" style="background: transparent; border-color: var(--card-border); color: var(--text-color);" onclick="navigateToHome()">🔄 Run Again</button>
             </div>
         </div>
 
-        <div class="dashboard-layout">
-            <!-- Sidebar details -->
-            <div class="dash-sidebar">
-                <div class="summary-card">
-                    <h4>Overall Confidence</h4>
-                    <div class="gauge-container" id="dash-overall-confidence">0.0</div>
-                    <p style="font-size: 12px; color: var(--text-muted);">Aggregate scoring weighted by source matching and validation checks.</p>
-                </div>
+        <!-- Split Grid Container -->
+        <div style="display: grid; grid-template-columns: 380px 1fr; gap: 32px; align-items: start;">
+            
+            <!-- LEFT PANEL: Projection Configuration -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div style="font-size: 20px; font-weight: 800; color: var(--primary-light); margin-bottom: 8px;">⚙️ Projection Controls</div>
                 
-                <div class="summary-card" style="text-align: left;">
-                    <h4 style="margin-bottom: 12px;">Extraction Errors</h4>
-                    <div id="extraction-failures-container" style="font-size: 12px; color: var(--text-muted); display: flex; flex-direction: column; gap: 8px;">
-                        No errors detected.
+                <!-- Card 1: Field Visibility -->
+                <div class="panel expanded" id="panel-visible-fields">
+                    <div class="panel-header" onclick="togglePanel('visible-fields')">
+                        <span>👁️ Field Visibility</span>
+                        <span class="panel-toggle-icon">▼</span>
+                    </div>
+                    <div class="panel-content" style="padding: 16px;">
+                        <div class="switch-container">
+                            <label>Candidate ID</label>
+                            <input type="checkbox" id="cfg-field-candidate_id" checked onchange="triggerReprojection()">
+                        </div>
+                        <div class="switch-container">
+                            <label>Full Name</label>
+                            <input type="checkbox" id="cfg-field-full_name" checked onchange="triggerReprojection()">
+                        </div>
+                        <div class="switch-container">
+                            <label>Emails</label>
+                            <input type="checkbox" id="cfg-field-emails" checked onchange="triggerReprojection()">
+                        </div>
+                        <div class="switch-container">
+                            <label>Phones</label>
+                            <input type="checkbox" id="cfg-field-phones" checked onchange="triggerReprojection()">
+                        </div>
+                        <div class="switch-container">
+                            <label>Location</label>
+                            <input type="checkbox" id="cfg-field-location" checked onchange="triggerReprojection()">
+                        </div>
+                        <div class="switch-container">
+                            <label>Headline</label>
+                            <input type="checkbox" id="cfg-field-headline" checked onchange="triggerReprojection()">
+                        </div>
+                        <div class="switch-container">
+                            <label>Skills</label>
+                            <input type="checkbox" id="cfg-field-skills" checked onchange="triggerReprojection()">
+                        </div>
+                        <div class="switch-container">
+                            <label>Experience</label>
+                            <input type="checkbox" id="cfg-field-experience" checked onchange="triggerReprojection()">
+                        </div>
+                        <div class="switch-container">
+                            <label>Education</label>
+                            <input type="checkbox" id="cfg-field-education" checked onchange="triggerReprojection()">
+                        </div>
+                        <div class="switch-container">
+                            <label>Links</label>
+                            <input type="checkbox" id="cfg-field-links" checked onchange="triggerReprojection()">
+                        </div>
+                        <div class="switch-container">
+                            <label>Provenance</label>
+                            <input type="checkbox" id="cfg-field-provenance" checked onchange="triggerReprojection()">
+                        </div>
+                        <div class="switch-container">
+                            <label>Confidence</label>
+                            <input type="checkbox" id="cfg-field-confidence" checked onchange="triggerReprojection()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Rename Fields -->
+                <div class="panel" id="panel-rename-fields">
+                    <div class="panel-header" onclick="togglePanel('rename-fields')">
+                        <span>🏷️ Rename Fields</span>
+                        <span class="panel-toggle-icon">▼</span>
+                    </div>
+                    <div class="panel-content" style="padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+                        <div>
+                            <div class="config-chip" style="margin-bottom: 6px;">Full Name ➔</div>
+                            <input type="text" class="form-control" style="padding: 6px 10px;" id="cfg-rename-full_name" value="full_name" oninput="triggerReprojection()">
+                        </div>
+                        <div>
+                            <div class="config-chip" style="margin-bottom: 6px;">Emails ➔</div>
+                            <input type="text" class="form-control" style="padding: 6px 10px;" id="cfg-rename-emails" value="emails" oninput="triggerReprojection()">
+                        </div>
+                        <div>
+                            <div class="config-chip" style="margin-bottom: 6px;">Phones ➔</div>
+                            <input type="text" class="form-control" style="padding: 6px 10px;" id="cfg-rename-phones" value="phones" oninput="triggerReprojection()">
+                        </div>
+                        <div>
+                            <div class="config-chip" style="margin-bottom: 6px;">Skills ➔</div>
+                            <input type="text" class="form-control" style="padding: 6px 10px;" id="cfg-rename-skills" value="skills" oninput="triggerReprojection()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Normalization -->
+                <div class="panel" id="panel-norm-settings">
+                    <div class="panel-header" onclick="togglePanel('norm-settings')">
+                        <span>🔄 Normalization Options</span>
+                        <span class="panel-toggle-icon">▼</span>
+                    </div>
+                    <div class="panel-content" style="padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+                        <div>
+                            <label style="font-size: 12px; color: var(--text-muted);">Phone Number Format</label>
+                            <select class="form-control" id="cfg-norm-phone" onchange="triggerReprojection()" style="padding: 8px 12px; margin-top: 4px;">
+                                <option value="E164">E164 Standard</option>
+                                <option value="Raw">Raw Number</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; color: var(--text-muted);">Skills Taxonomy</label>
+                            <select class="form-control" id="cfg-norm-skills" onchange="triggerReprojection()" style="padding: 8px 12px; margin-top: 4px;">
+                                <option value="Canonical">Canonical Skill Name</option>
+                                <option value="Original">Original Extracted</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; color: var(--text-muted);">Country Format</label>
+                            <select class="form-control" id="cfg-norm-country" onchange="triggerReprojection()" style="padding: 8px 12px; margin-top: 4px;">
+                                <option value="ISO">ISO Code (Alpha-2)</option>
+                                <option value="Full">Full Country Name</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; color: var(--text-muted);">Date Standard</label>
+                            <select class="form-control" id="cfg-norm-dates" onchange="triggerReprojection()" style="padding: 8px 12px; margin-top: 4px;">
+                                <option value="YYYY-MM">YYYY-MM</option>
+                                <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Metadata toggles -->
+                <div class="panel" id="panel-metadata-settings">
+                    <div class="panel-header" onclick="togglePanel('metadata-settings')">
+                        <span>📊 Metadata Options</span>
+                        <span class="panel-toggle-icon">▼</span>
+                    </div>
+                    <div class="panel-content" style="padding: 16px;">
+                        <div class="switch-container">
+                            <label>Include Provenance</label>
+                            <input type="checkbox" id="cfg-include-provenance" checked onchange="triggerReprojection()">
+                        </div>
+                        <div class="switch-container">
+                            <label>Include Confidence</label>
+                            <input type="checkbox" id="cfg-include-confidence" checked onchange="triggerReprojection()">
+                        </div>
+                        <div class="switch-container">
+                            <label>Show Sources</label>
+                            <input type="checkbox" id="cfg-show-sources" checked onchange="triggerReprojection()">
+                        </div>
+                        <div class="switch-container">
+                            <label>Show Methods</label>
+                            <input type="checkbox" id="cfg-show-methods" checked onchange="triggerReprojection()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: Missing Values -->
+                <div class="panel" id="panel-missing-settings">
+                    <div class="panel-header" onclick="togglePanel('missing-settings')">
+                        <span>❓ Missing Value Strategy</span>
+                        <span class="panel-toggle-icon">▼</span>
+                    </div>
+                    <div class="panel-content" style="padding: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="radio" id="cfg-missing-null" name="missing-strategy" value="null" checked onchange="triggerReprojection()"> NULL (Set to null)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="radio" id="cfg-missing-omit" name="missing-strategy" value="omit" onchange="triggerReprojection()"> OMIT (Exclude property)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="radio" id="cfg-missing-error" name="missing-strategy" value="error" onchange="triggerReprojection()"> ERROR (Raise validation exception)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn-panel-action" style="flex: 1; text-align: center; justify-content: center;" onclick="resetRuntimeConfig()">🔄 Reset Schema</button>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: Tabs switcher and Candidate Dashboard Preview -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                
+                <!-- Navigation Tabs -->
+                <div style="display: flex; border-bottom: 1px solid var(--card-border); gap: 8px; margin-bottom: 8px;">
+                    <button class="tab-btn active" id="tab-btn-visual" onclick="switchResultTab('visual')">🎨 Visual Preview</button>
+                    <button class="tab-btn" id="tab-btn-json" onclick="switchResultTab('json')">🌐 Projected JSON</button>
+                    <button class="tab-btn" id="tab-btn-tree" onclick="switchResultTab('tree')">🧬 Tree View</button>
+                </div>
+
+                <!-- Visual Preview Content (Default) -->
+                <div class="tab-content active" id="tab-content-visual" style="display: flex; flex-direction: column; gap: 24px;">
+
+            <!-- SECTION 1: Overall Confidence -->
+            <div class="panel expanded" id="panel-sec1">
+                <div class="panel-header" onclick="togglePanel('sec1')">
+                    <span>📊 Section 1: Overall Confidence</span>
+                    <span class="panel-toggle-icon">▼</span>
+                </div>
+                <div class="panel-content">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; align-items: center;">
+                        <div style="text-align: center;">
+                            <div class="gauge-container" id="sec1-confidence-gauge" style="width: 140px; height: 140px; font-size: 32px; border: 8px solid var(--soft-gray); border-top-color: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">0%</div>
+                            <div style="font-weight: 700; margin-top: 12px;">Overall Confidence Score</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px;">
+                            <div><strong>Aggregate Score:</strong> <span id="sec1-agg-score">0.0</span></div>
+                            <div><strong>Validation Status:</strong> <span id="sec1-val-status" class="badge">PENDING</span></div>
+                            <div><strong>Execution Time:</strong> <span id="sec1-exec-time">0 ms</span></div>
+                            <div><strong>Sources Processed:</strong> <span id="sec1-sources-count">0</span></div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Profile panels -->
-            <div>
-                <!-- Panel 1: Name and Metadata -->
-                <div class="panel expanded" id="panel-basic">
-                    <div class="panel-header" onclick="togglePanel('basic')">
-                        <span>👤 Basic Information</span>
-                        <span class="panel-toggle-icon">▶</span>
-                    </div>
-                    <div class="panel-content">
-                        <table style="width: 100%; text-align: left; border-collapse: collapse;">
-                            <tr>
-                                <td style="width: 140px; font-weight: 600; padding: 10px 0;">Full Name</td>
-                                <td id="res-full-name">N/A</td>
-                            </tr>
-                            <tr>
-                                <td style="font-weight: 600; padding: 10px 0;">Headline</td>
-                                <td id="res-headline">N/A</td>
-                            </tr>
-                            <tr>
-                                <td style="font-weight: 600; padding: 10px 0;">Location</td>
-                                <td id="res-location">N/A</td>
-                            </tr>
-                            <tr>
-                                <td style="font-weight: 600; padding: 10px 0;">Years Experience</td>
-                                <td id="res-experience-years">N/A</td>
-                            </tr>
-                        </table>
-                    </div>
+            <!-- SECTION 2: Canonical Candidate Profile -->
+            <div class="panel expanded" id="panel-sec2">
+                <div class="panel-header" onclick="togglePanel('sec2')">
+                    <span>👤 Section 2: Canonical Candidate Profile</span>
+                    <span class="panel-toggle-icon">▼</span>
                 </div>
-
-                <!-- Panel 2: Emails & Phones -->
-                <div class="panel" id="panel-contact">
-                    <div class="panel-header" onclick="togglePanel('contact')">
-                        <span>📞 Contact details</span>
-                        <span class="panel-toggle-icon">▶</span>
-                    </div>
-                    <div class="panel-content">
-                        <div style="margin-bottom: 16px;">
-                            <h5 style="margin-bottom: 8px;">Emails</h5>
-                            <div id="res-emails-list"></div>
+                <div class="panel-content">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                        <div class="feature-card">
+                            <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">Candidate ID</div>
+                            <div id="sec2-candidate-id" style="font-weight: bold; font-size: 16px;">N/A</div>
                         </div>
-                        <div>
-                            <h5 style="margin-bottom: 8px;">Phone Numbers</h5>
-                            <div id="res-phones-list"></div>
+                        <div class="feature-card">
+                            <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">Full Name</div>
+                            <div id="sec2-full-name" style="font-weight: bold; font-size: 16px;">N/A</div>
+                        </div>
+                        <div class="feature-card">
+                            <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">Headline</div>
+                            <div id="sec2-headline" style="font-weight: bold; font-size: 16px;">N/A</div>
+                        </div>
+                        <div class="feature-card">
+                            <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">Years of Experience</div>
+                            <div id="sec2-years-exp" style="font-weight: bold; font-size: 16px;">N/A</div>
+                        </div>
+                        <div class="feature-card" style="grid-column: span 1;">
+                            <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">Location Details</div>
+                            <div style="font-size: 14px;">
+                                <strong>City:</strong> <span id="sec2-loc-city">N/A</span><br>
+                                <strong>Region:</strong> <span id="sec2-loc-region">N/A</span><br>
+                                <strong>Country:</strong> <span id="sec2-loc-country">N/A</span>
+                            </div>
+                        </div>
+                        <div class="feature-card" style="grid-column: span 1;">
+                            <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">Professional Links</div>
+                            <div style="font-size: 13px; display: flex; flex-direction: column; gap: 4px;">
+                                <div><strong>GitHub:</strong> <span id="sec2-link-github">N/A</span></div>
+                                <div><strong>LinkedIn:</strong> <span id="sec2-link-linkedin">N/A</span></div>
+                                <div><strong>Portfolio:</strong> <span id="sec2-link-portfolio">N/A</span></div>
+                                <div id="sec2-other-links-list"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Panel 3: Skills -->
-                <div class="panel" id="panel-skills">
-                    <div class="panel-header" onclick="togglePanel('skills')">
-                        <span>🎯 Inferred Technical Skills</span>
-                        <span class="panel-toggle-icon">▶</span>
-                    </div>
-                    <div class="panel-content">
-                        <div style="display: flex; flex-wrap: wrap; gap: 8px;" id="res-skills-list"></div>
+            <!-- SECTION 3: Emails -->
+            <div class="panel expanded" id="panel-sec3">
+                <div class="panel-header" onclick="togglePanel('sec3')">
+                    <span>📧 Section 3: Emails</span>
+                    <span class="panel-toggle-icon">▼</span>
+                </div>
+                <div class="panel-content">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;" id="sec3-emails-container">
+                        <!-- Email cards will go here -->
                     </div>
                 </div>
+            </div>
 
-                <!-- Panel 4: Experience & Education -->
-                <div class="panel" id="panel-history">
-                    <div class="panel-header" onclick="togglePanel('history')">
-                        <span>💼 Experience & Education</span>
-                        <span class="panel-toggle-icon">▶</span>
-                    </div>
-                    <div class="panel-content">
-                        <div style="margin-bottom: 24px;">
-                            <h5 style="margin-bottom: 12px; border-bottom: 1px solid var(--card-border); padding-bottom: 4px;">Experience</h5>
-                            <div id="res-experience-list"></div>
-                        </div>
-                        <div>
-                            <h5 style="margin-bottom: 12px; border-bottom: 1px solid var(--card-border); padding-bottom: 4px;">Education</h5>
-                            <div id="res-education-list"></div>
-                        </div>
+            <!-- SECTION 4: Phones -->
+            <div class="panel expanded" id="panel-sec4">
+                <div class="panel-header" onclick="togglePanel('sec4')">
+                    <span>📞 Section 4: Phones</span>
+                    <span class="panel-toggle-icon">▼</span>
+                </div>
+                <div class="panel-content">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;" id="sec4-phones-container">
+                        <!-- Phone cards will go here -->
                     </div>
                 </div>
+            </div>
 
-                <!-- Panel 5: Full Lineage & Provenance -->
-                <div class="panel" id="panel-provenance">
-                    <div class="panel-header" onclick="togglePanel('provenance')">
-                        <span>📜 Field Provenance & Decisions</span>
-                        <span class="panel-toggle-icon">▶</span>
+            <!-- SECTION 5: Skills -->
+            <div class="panel expanded" id="panel-sec5">
+                <div class="panel-header" onclick="togglePanel('sec5')">
+                    <span>🎯 Section 5: Skills</span>
+                    <span class="panel-toggle-icon">▼</span>
+                </div>
+                <div class="panel-content" style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;" id="sec5-skills-table">
+                        <thead>
+                            <tr>
+                                <th style="padding: 12px; border-bottom: 1px solid var(--card-border);">Skill</th>
+                                <th style="padding: 12px; border-bottom: 1px solid var(--card-border);">Confidence</th>
+                                <th style="padding: 12px; border-bottom: 1px solid var(--card-border);">Sources</th>
+                                <th style="padding: 12px; border-bottom: 1px solid var(--card-border);">Normalization</th>
+                                <th style="padding: 12px; border-bottom: 1px solid var(--card-border);">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Skills rows will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION 6: Experience -->
+            <div class="panel expanded" id="panel-sec6">
+                <div class="panel-header" onclick="togglePanel('sec6')">
+                    <span>💼 Section 6: Experience</span>
+                    <span class="panel-toggle-icon">▼</span>
+                </div>
+                <div class="panel-content">
+                    <div style="display: flex; flex-direction: column; gap: 16px; border-left: 2px solid var(--primary-light); padding-left: 20px; margin-left: 10px;" id="sec6-experience-timeline">
+                        <!-- Experience cards -->
                     </div>
-                    <div class="panel-content">
-                        <table style="width: 100%; border-collapse: collapse;" id="provenance-details-table">
+                </div>
+            </div>
+
+            <!-- SECTION 7: Education -->
+            <div class="panel expanded" id="panel-sec7">
+                <div class="panel-header" onclick="togglePanel('sec7')">
+                    <span>🎓 Section 7: Education</span>
+                    <span class="panel-toggle-icon">▼</span>
+                </div>
+                <div class="panel-content">
+                    <div style="display: flex; flex-direction: column; gap: 16px; border-left: 2px solid var(--primary-light); padding-left: 20px; margin-left: 10px;" id="sec7-education-timeline">
+                        <!-- Education cards -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 8: Provenance -->
+            <div class="panel expanded" id="panel-sec8">
+                <div class="panel-header" onclick="togglePanel('sec8')">
+                    <span>📜 Section 8: Provenance</span>
+                    <span class="panel-toggle-icon">▼</span>
+                </div>
+                <div class="panel-content">
+                    <!-- Sorting/Searching toolbar -->
+                    <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+                        <input type="text" class="form-control" style="max-width: 300px; margin: 0;" id="sec8-search-input" placeholder="🔍 Search provenance..." oninput="filterProvenanceTable()">
+                        <button class="btn-panel-action" onclick="exportProvenanceCSV()">📥 Export CSV</button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left;" id="sec8-provenance-table">
                             <thead>
                                 <tr>
-                                    <th style="padding: 10px 0; border-bottom: 1px solid var(--card-border);">Field</th>
-                                    <th style="padding: 10px 0; border-bottom: 1px solid var(--card-border);">Source</th>
-                                    <th style="padding: 10px 0; border-bottom: 1px solid var(--card-border);">Method</th>
+                                    <th style="padding: 12px; border-bottom: 1px solid var(--card-border); cursor: pointer;" onclick="sortProvenanceTable('field')">Field ⇅</th>
+                                    <th style="padding: 12px; border-bottom: 1px solid var(--card-border); cursor: pointer;" onclick="sortProvenanceTable('value')">Selected Value ⇅</th>
+                                    <th style="padding: 12px; border-bottom: 1px solid var(--card-border); cursor: pointer;" onclick="sortProvenanceTable('source')">Source ⇅</th>
+                                    <th style="padding: 12px; border-bottom: 1px solid var(--card-border); cursor: pointer;" onclick="sortProvenanceTable('method')">Method ⇅</th>
+                                    <th style="padding: 12px; border-bottom: 1px solid var(--card-border); cursor: pointer;" onclick="sortProvenanceTable('confidence')">Confidence ⇅</th>
+                                    <th style="padding: 12px; border-bottom: 1px solid var(--card-border);">Normalization</th>
+                                    <th style="padding: 12px; border-bottom: 1px solid var(--card-border);">Merge Decision</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Provenance rows -->
+                                <!-- Provenance rows will be injected -->
                             </tbody>
                         </table>
                     </div>
-                </div>
-
-                <!-- Panel 6: Beautiful JSON Schema View -->
-                <div class="panel" id="panel-json">
-                    <div class="panel-header" onclick="togglePanel('json')">
-                        <span>⚙️ Canonical JSON Output</span>
-                        <span class="panel-toggle-icon">▶</span>
-                    </div>
-                    <div class="panel-content" style="padding: 0;">
-                        <pre style="margin: 0; border-radius: 0; border: none;"><code id="profile-json-block"></code></pre>
+                    <!-- Pagination control -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; font-size: 13px; color: var(--text-muted);">
+                        <span id="sec8-pagination-info">Showing 0-0 of 0</span>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-panel-action" id="sec8-btn-prev" onclick="prevProvenancePage()">Previous</button>
+                            <button class="btn-panel-action" id="sec8-btn-next" onclick="nextProvenancePage()">Next</button>
+                        </div>
                     </div>
                 </div>
-
             </div>
-        </div>
-    </div>
+
+            <!-- SECTION 9: Extraction Summary -->
+            <div class="panel expanded" id="panel-sec9">
+                <div class="panel-header" onclick="togglePanel('sec9')">
+                    <span>📈 Section 9: Extraction Summary</span>
+                    <span class="panel-toggle-icon">▼</span>
+                </div>
+                <div class="panel-content">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px;">
+                        <div class="summary-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <h4 style="margin-bottom: 8px;">Resume PDF/DOCX</h4>
+                            <div class="gauge-container" id="sec9-resume-percentage" style="width: 100px; height: 100px; font-size: 24px; margin-bottom: 8px; border: 6px solid var(--soft-gray); border-top-color: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center;">0%</div>
+                            <p style="font-size: 12px; color: var(--text-muted);">Fields contributed by parsed CV files.</p>
+                        </div>
+                        <div class="summary-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <h4 style="margin-bottom: 8px;">Recruiter CSV</h4>
+                            <div class="gauge-container" id="sec9-csv-percentage" style="width: 100px; height: 100px; font-size: 24px; margin-bottom: 8px; border: 6px solid var(--soft-gray); border-top-color: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center;">0%</div>
+                            <p style="font-size: 12px; color: var(--text-muted);">Fields contributed by recruiter spreadsheets.</p>
+                        </div>
+                        <div class="summary-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <h4 style="margin-bottom: 8px;">GitHub Profile API</h4>
+                            <div class="gauge-container" id="sec9-github-percentage" style="width: 100px; height: 100px; font-size: 24px; margin-bottom: 8px; border: 6px solid var(--soft-gray); border-top-color: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center;">0%</div>
+                            <p style="font-size: 12px; color: var(--text-muted);">Fields contributed by live API repository scans.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 10: Validation -->
+            <div class="panel expanded" id="panel-sec10">
+                <div class="panel-header" onclick="togglePanel('sec10')">
+                    <span>✅ Section 10: Validation Report</span>
+                    <span class="panel-toggle-icon">▼</span>
+                </div>
+                <div class="panel-content">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+                        <div class="feature-card" style="text-align: center;">
+                            <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px;">Schema Validation</div>
+                            <span class="badge" id="sec10-val-schema">PASS</span>
+                        </div>
+                        <div class="feature-card" style="text-align: center;">
+                            <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px;">Email Validation</div>
+                            <span class="badge" id="sec10-val-email">PASS</span>
+                        </div>
+                        <div class="feature-card" style="text-align: center;">
+                            <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px;">Phone Validation</div>
+                            <span class="badge" id="sec10-val-phone">PASS</span>
+                        </div>
+                        <div class="feature-card" style="text-align: center;">
+                            <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px;">Business Rules</div>
+                            <span class="badge" id="sec10-val-business">PASS</span>
+                        </div>
+                        <div class="feature-card" style="text-align: center;">
+                            <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px;">Projection Validation</div>
+                            <span class="badge" id="sec10-val-projection">PASS</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 11: Pipeline Execution -->
+            <div class="panel expanded" id="panel-sec11">
+                <div class="panel-header" onclick="togglePanel('sec11')">
+                    <span>⚙️ Section 11: Pipeline Execution Phases</span>
+                    <span class="panel-toggle-icon">▼</span>
+                </div>
+                <div class="panel-content">
+                    <div style="display: flex; flex-direction: column; gap: 16px; border-left: 2px solid var(--primary-light); padding-left: 20px; margin-left: 10px;" id="sec11-execution-phases-timeline">
+                        <!-- Phases injected here -->
+                    </div>
+                </div>
+            </div>
+
+                </div> <!-- End tab-content-visual -->
+
+                <!-- JSON Content Tab -->
+                <div class="tab-content" id="tab-content-json">
+                    <div class="panel expanded" id="panel-projected-json">
+                        <div class="panel-header" style="cursor: default;">
+                            <span>🗂️ Projected JSON Canonical Output</span>
+                            <div style="display: flex; gap: 12px;">
+                                <button class="btn-panel-action" style="padding: 4px 10px; font-size: 11px;" onclick="copyProjectedJSON()">📋 Copy JSON</button>
+                                <button class="btn-panel-action" style="padding: 4px 10px; font-size: 11px;" onclick="downloadProjectedJSON()">📥 Download JSON</button>
+                            </div>
+                        </div>
+                        <div class="panel-content" style="padding: 0;">
+                            <pre style="margin: 0; border: none; border-radius: 0;"><code id="projected-live-json" style="color: #c084fc;">{}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tree View Content Tab -->
+                <div class="tab-content" id="tab-content-tree">
+                    <div class="panel expanded" id="panel-tree-view">
+                        <div class="panel-header" style="cursor: default;">
+                            <span>🧬 Interactive Schema Tree View</span>
+                        </div>
+                        <div class="panel-content" id="tree-view-container" style="font-family: var(--font-code); font-size: 13px; color: var(--text-color); max-height: 600px; overflow-y: auto;">
+                            <!-- Tree View will be rendered dynamically here -->
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- End RIGHT PANEL -->
+        </div> <!-- End Split Grid Container -->
+    </div> <!-- End Page 4: page-result -->
+
+    <!-- Floating Button: Generate output_schema.json -->
+    <button onclick="saveSchemaConfigToServer()" style="position: fixed; bottom: 30px; right: 30px; z-index: 999; background: linear-gradient(135deg, var(--primary), var(--primary-light)); border: none; color: white; border-radius: 50px; padding: 14px 28px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 8px 24px rgba(109, 40, 217, 0.45); display: flex; align-items: center; gap: 8px;">
+        <span>🧬</span> Generate output_schema.json
+    </button>
 
     <script>
         // State variables
@@ -985,6 +1415,13 @@
         let uploadedCSV = null;
         let pipelineResult = null;
         let isGithubUrlValid = true;
+
+        // Pagination/Sorting for Provenance Table
+        let provenanceData = [];
+        let provCurrentPage = 1;
+        const provPageSize = 5;
+        let provSortCol = 'field';
+        let provSortAsc = true;
 
         // Navigation
         function navigateToHome() {
@@ -1016,7 +1453,6 @@
             
             document.getElementById('resume-preview-card').style.display = 'none';
             document.getElementById('csv-preview-card').style.display = 'none';
-            document.getElementById('csv-candidate-select-container').style.display = 'none';
             document.getElementById('github-val-message').style.display = 'none';
             document.getElementById('form-validation-alert').classList.remove('active');
             
@@ -1094,8 +1530,6 @@
                         </div>
                         <span class="badge badge-success">Ingested</span>
                     `;
-                    
-
                 }
             } catch (e) {
                 previewCard.innerHTML = `
@@ -1139,7 +1573,6 @@
 
         // Launch run
         async function startTransformationRun() {
-            // Check validations explicitly
             const alertBox = document.getElementById('form-validation-alert');
             if (!uploadedResume || !uploadedCSV) {
                 alertBox.innerText = "Error: Resume and Recruiter CSV are both required Ingestion inputs.";
@@ -1178,11 +1611,9 @@
                 container.appendChild(row);
             });
             
-            // Animate steps highlight
             let progressIdx = 0;
             const animInterval = setInterval(() => {
                 if (progressIdx < phases.length) {
-                    // Complete previous
                     if (progressIdx > 0) {
                         const prev = document.getElementById(`step-row-${progressIdx-1}`);
                         prev.className = 'running-step completed';
@@ -1197,7 +1628,6 @@
                 }
             }, 120);
 
-            // Fetch candidate selection
             const candidateId = "AUTO";
             const githubUrl = document.getElementById('github-url').value.trim();
             
@@ -1217,7 +1647,6 @@
                 const data = await response.json();
                 pipelineResult = data;
                 
-                // Show result page
                 clearInterval(animInterval);
                 renderResults(data);
                 
@@ -1231,118 +1660,454 @@
             }
         }
 
+        // Color coding for confidence scores
+        function getConfidenceClass(score) {
+            if (score === undefined || score === null) return 'badge-danger';
+            const s = parseFloat(score);
+            if (s >= 0.85) return 'badge-success';
+            if (s >= 0.60) return 'badge-warning';
+            return 'badge-danger';
+        }
+
+        // SECTION 8: Provenance Table Helpers
+        function renderProvenanceTable() {
+            const tbody = document.querySelector('#sec8-provenance-table tbody');
+            tbody.innerHTML = '';
+            
+            const searchVal = document.getElementById('sec8-search-input').value.toLowerCase().trim();
+            
+            // Filter
+            let filtered = provenanceData.filter(row => {
+                return (
+                    (row.field && row.field.toLowerCase().includes(searchVal)) ||
+                    (row.value && row.value.toLowerCase().includes(searchVal)) ||
+                    (row.source && row.source.toLowerCase().includes(searchVal)) ||
+                    (row.method && row.method.toLowerCase().includes(searchVal))
+                );
+            });
+            
+            // Sort
+            filtered.sort((a, b) => {
+                let valA = a[provSortCol] || '';
+                let valB = b[provSortCol] || '';
+                if (typeof valA === 'number') {
+                    return provSortAsc ? valA - valB : valB - valA;
+                }
+                valA = String(valA).toLowerCase();
+                valB = String(valB).toLowerCase();
+                return provSortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            });
+            
+            // Paginate
+            const totalRows = filtered.length;
+            const totalPages = Math.ceil(totalRows / provPageSize);
+            if (provCurrentPage > totalPages) provCurrentPage = Math.max(1, totalPages);
+            
+            const startIdx = (provCurrentPage - 1) * provPageSize;
+            const endIdx = Math.min(startIdx + provPageSize, totalRows);
+            const pageData = filtered.slice(startIdx, endIdx);
+            
+            if (pageData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="padding:12px; text-align:center; color:var(--text-muted)">No matching records found</td></tr>';
+                document.getElementById('sec8-pagination-info').innerText = 'Showing 0-0 of 0';
+                document.getElementById('sec8-btn-prev').setAttribute('disabled', 'true');
+                document.getElementById('sec8-btn-next').setAttribute('disabled', 'true');
+                return;
+            }
+            
+            pageData.forEach(row => {
+                const confidenceClass = getConfidenceClass(row.confidence);
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid var(--card-border); font-weight: 600;">${row.field}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid var(--card-border);">${row.value}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid var(--card-border); color: var(--primary-light);">${row.source}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid var(--card-border); color: var(--text-muted);">${row.method}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid var(--card-border);"><span class="badge ${confidenceClass}">${(row.confidence || 0).toFixed(2)}</span></td>
+                        <td style="padding: 12px; border-bottom: 1px solid var(--card-border);">${row.normalization || "None"}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid var(--card-border); font-size: 12px; color: var(--text-muted);">${row.merge_decision || "N/A"}</td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('sec8-pagination-info').innerText = `Showing ${startIdx + 1}-${endIdx} of ${totalRows}`;
+            
+            if (provCurrentPage > 1) {
+                document.getElementById('sec8-btn-prev').removeAttribute('disabled');
+            } else {
+                document.getElementById('sec8-btn-prev').setAttribute('disabled', 'true');
+            }
+            
+            if (endIdx < totalRows) {
+                document.getElementById('sec8-btn-next').removeAttribute('disabled');
+            } else {
+                document.getElementById('sec8-btn-next').setAttribute('disabled', 'true');
+            }
+        }
+
+        function sortProvenanceTable(col) {
+            if (provSortCol === col) {
+                provSortAsc = !provSortAsc;
+            } else {
+                provSortCol = col;
+                provSortAsc = true;
+            }
+            renderProvenanceTable();
+        }
+
+        function filterProvenanceTable() {
+            provCurrentPage = 1;
+            renderProvenanceTable();
+        }
+
+        function prevProvenancePage() {
+            if (provCurrentPage > 1) {
+                provCurrentPage--;
+                renderProvenanceTable();
+            }
+        }
+
+        function nextProvenancePage() {
+            provCurrentPage++;
+            renderProvenanceTable();
+        }
+
+        function exportProvenanceCSV() {
+            let csv = 'Field,Selected Value,Source,Method,Confidence,Normalization,Merge Decision\n';
+            provenanceData.forEach(row => {
+                csv += `"${row.field}","${row.value}","${row.source}","${row.method}",${row.confidence},"${row.normalization}","${row.merge_decision}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'provenance_report.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
         // Render Results
         function renderResults(data) {
             const profile = data.projected_profile;
             const report = data.pipeline_report;
             
-            document.getElementById('result-cand-name').innerText = profile.full_name || 'Ingested Candidate Profile';
-            document.getElementById('result-cand-id').innerText = `ID: ${profile.candidate_id} | Ingest Transaction: ${report.pipeline_id.substring(0,8)}`;
-            document.getElementById('dash-overall-confidence').innerText = profile.overall_confidence.toFixed(2);
+            // Header
+            document.getElementById('result-cand-name').innerText = profile.full_name || 'Not Available';
+            document.getElementById('result-avatar').innerText = (profile.full_name ? profile.full_name[0] : '👤');
+            document.getElementById('result-cand-id').innerText = `ID: ${profile.candidate_id || 'Not Available'}`;
+            document.getElementById('result-execution-id').innerText = `Execution ID: ${report.pipeline_id.substring(0, 8)}`;
             
-            // Basic panel
-            document.getElementById('res-full-name').innerText = profile.full_name || 'N/A';
-            document.getElementById('res-headline').innerText = profile.headline || 'N/A';
-            const loc = profile.location ? `${profile.location.city || ''}, ${profile.location.region || ''}, ${profile.location.country || ''}` : 'N/A';
-            document.getElementById('res-location').innerText = loc;
-            document.getElementById('res-experience-years').innerText = profile.years_experience !== null ? `${profile.years_experience} years` : 'N/A';
+            const overallConf = profile.overall_confidence || 0.0;
+            const overallConfClass = getConfidenceClass(overallConf);
+            const overallConfBadge = document.getElementById('result-overall-confidence-badge');
+            overallConfBadge.className = `badge ${overallConfClass}`;
+            overallConfBadge.innerText = `Score: ${overallConf.toFixed(2)}`;
+            overallConfBadge.style.fontSize = '14px';
+            overallConfBadge.style.padding = '6px 12px';
+
+            // SECTION 1: Overall Confidence
+            document.getElementById('sec1-confidence-gauge').innerText = `${Math.round(overallConf * 100)}%`;
+            document.getElementById('sec1-agg-score').innerText = overallConf.toFixed(2);
             
-            // Contact panel
-            const emailList = document.getElementById('res-emails-list');
-            emailList.innerHTML = '';
+            const isValValid = report.validation_report && report.validation_report.is_valid;
+            const sec1ValStatus = document.getElementById('sec1-val-status');
+            sec1ValStatus.innerText = isValValid ? "VALID" : "WARNINGS";
+            sec1ValStatus.className = `badge ${isValValid ? 'badge-success' : 'badge-warning'}`;
+            
+            document.getElementById('sec1-exec-time').innerText = `${report.execution_time_ms} ms`;
+            document.getElementById('sec1-sources-count').innerText = report.metrics.discovered_sources_count || '0';
+
+            // SECTION 2: Canonical Candidate Profile
+            document.getElementById('sec2-candidate-id').innerText = profile.candidate_id || 'Not Available';
+            document.getElementById('sec2-full-name').innerText = profile.full_name || 'Not Available';
+            document.getElementById('sec2-headline').innerText = profile.headline || 'Not Available';
+            document.getElementById('sec2-years-exp').innerText = profile.years_experience !== null ? `${profile.years_experience} years` : 'Not Available';
+            
+            document.getElementById('sec2-loc-city').innerText = (profile.location && profile.location.city) || 'Not Available';
+            document.getElementById('sec2-loc-region').innerText = (profile.location && profile.location.region) || 'Not Available';
+            document.getElementById('sec2-loc-country').innerText = (profile.location && profile.location.country) || 'Not Available';
+            
+            const gitSpan = document.getElementById('sec2-link-github');
+            if (profile.links && profile.links.github) {
+                gitSpan.innerHTML = `<a href="${profile.links.github}" target="_blank" style="color: var(--primary-light); text-decoration: none;">${profile.links.github}</a>`;
+            } else {
+                gitSpan.innerText = 'Not Available';
+            }
+            
+            const liSpan = document.getElementById('sec2-link-linkedin');
+            if (profile.links && profile.links.linkedin) {
+                liSpan.innerHTML = `<a href="${profile.links.linkedin}" target="_blank" style="color: var(--primary-light); text-decoration: none;">${profile.links.linkedin}</a>`;
+            } else {
+                liSpan.innerText = 'Not Available';
+            }
+            
+            const pfSpan = document.getElementById('sec2-link-portfolio');
+            if (profile.links && profile.links.portfolio) {
+                pfSpan.innerHTML = `<a href="${profile.links.portfolio}" target="_blank" style="color: var(--primary-light); text-decoration: none;">${profile.links.portfolio}</a>`;
+            } else {
+                pfSpan.innerText = 'Not Available';
+            }
+            
+            const otherLinksList = document.getElementById('sec2-other-links-list');
+            otherLinksList.innerHTML = '';
+            if (profile.links && profile.links.other && profile.links.other.length > 0) {
+                profile.links.other.forEach(link => {
+                    otherLinksList.innerHTML += `<div><strong>Other:</strong> <a href="${link}" target="_blank" style="color: var(--primary-light); text-decoration: none;">${link}</a></div>`;
+                });
+            }
+
+            // SECTION 3: Emails
+            const emailsContainer = document.getElementById('sec3-emails-container');
+            emailsContainer.innerHTML = '';
             if (profile.emails && profile.emails.length > 0) {
                 profile.emails.forEach(e => {
-                    emailList.innerHTML += `<div style="margin-bottom: 6px;">📧 <strong>${e.value}</strong> <span style="font-size: 11px; color: var(--text-muted)">(confidence: ${e.confidence})</span></div>`;
+                    const confidenceClass = getConfidenceClass(e.confidence);
+                    emailsContainer.innerHTML += `
+                        <div class="feature-card">
+                            <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">Email Address</div>
+                            <div style="font-weight: bold; font-size: 15px; margin-bottom: 8px;">${e.value || 'Not Available'}</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-top: 8px;">
+                                <span>Source: <strong style="color: var(--primary-light)">${e.source || 'Unknown'}</strong></span>
+                                <span class="badge ${confidenceClass}">Confidence: ${(e.confidence || 0).toFixed(2)}</span>
+                            </div>
+                        </div>
+                    `;
                 });
             } else {
-                emailList.innerText = 'No emails extracted.';
+                emailsContainer.innerHTML = '<div style="color: var(--text-muted); padding: 12px;">Not Available</div>';
             }
-            
-            const phoneList = document.getElementById('res-phones-list');
-            phoneList.innerHTML = '';
+
+            // SECTION 4: Phones
+            const phonesContainer = document.getElementById('sec4-phones-container');
+            phonesContainer.innerHTML = '';
             if (profile.phones && profile.phones.length > 0) {
                 profile.phones.forEach(p => {
-                    phoneList.innerHTML += `<div style="margin-bottom: 6px;">📞 <strong>${p.value}</strong> <span style="font-size: 11px; color: var(--text-muted)">(confidence: ${p.confidence})</span></div>`;
-                });
-            } else {
-                phoneList.innerText = 'No phones extracted.';
-            }
-            
-            // Skills panel
-            const skillsList = document.getElementById('res-skills-list');
-            skillsList.innerHTML = '';
-            if (profile.skills) {
-                profile.skills.forEach(skill => {
-                    skillsList.innerHTML += `<span class="badge" style="background-color: var(--primary); color: white; margin-right: 6px;">${skill.name} (${(skill.confidence*100).toFixed(0)}%)</span>`;
-                });
-            }
-            
-            // History list
-            const expList = document.getElementById('res-experience-list');
-            expList.innerHTML = '';
-            if (profile.experience && profile.experience.length > 0) {
-                profile.experience.forEach(exp => {
-                    expList.innerHTML += `
-                        <div style="margin-bottom: 12px;">
-                            <strong>${exp.title}</strong> at <span>${exp.company}</span>
-                            <div style="font-size: 12px; color: var(--text-muted);">${exp.start || ''} - ${exp.end || 'Present'}</div>
+                    const confidenceClass = getConfidenceClass(p.confidence);
+                    phonesContainer.innerHTML += `
+                        <div class="feature-card">
+                            <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">Phone Number</div>
+                            <div style="font-weight: bold; font-size: 15px; margin-bottom: 4px;">${p.value || 'Not Available'}</div>
+                            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">Normalized E.164</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-top: 8px;">
+                                <span>Source: <strong style="color: var(--primary-light)">${p.source || 'Unknown'}</strong></span>
+                                <span class="badge ${confidenceClass}">Confidence: ${(p.confidence || 0).toFixed(2)}</span>
+                            </div>
                         </div>
                     `;
                 });
             } else {
-                expList.innerText = 'No experiences extracted.';
+                phonesContainer.innerHTML = '<div style="color: var(--text-muted); padding: 12px;">Not Available</div>';
             }
-            
-            const eduList = document.getElementById('res-education-list');
-            eduList.innerHTML = '';
-            if (profile.education && profile.education.length > 0) {
-                profile.education.forEach(edu => {
-                    eduList.innerHTML += `
-                        <div style="margin-bottom: 12px;">
-                            <strong>${edu.degree || 'Degree'}</strong> in <span>${edu.field || 'Field'}</span>
-                            <div style="font-size: 12px; color: var(--text-muted);">${edu.institution} | Class of ${edu.end_year || 'N/A'}</div>
-                        </div>
-                    `;
-                });
-            } else {
-                eduList.innerText = 'No education history extracted.';
-            }
-            
-            // Provenance table
-            const provTable = document.querySelector('#provenance-details-table tbody');
-            provTable.innerHTML = '';
-            if (profile.provenance) {
-                profile.provenance.forEach(prov => {
-                    provTable.innerHTML += `
+
+            // SECTION 5: Skills
+            const skillsBody = document.querySelector('#sec5-skills-table tbody');
+            skillsBody.innerHTML = '';
+            if (profile.skills && profile.skills.length > 0) {
+                profile.skills.forEach(s => {
+                    const confidenceClass = getConfidenceClass(s.confidence);
+                    skillsBody.innerHTML += `
                         <tr>
-                            <td style="padding: 8px 0; border-bottom: 1px solid var(--card-border); font-weight: 500;">${prov.field}</td>
-                            <td style="padding: 8px 0; border-bottom: 1px solid var(--card-border); color: var(--text-muted);">${prov.source}</td>
-                            <td style="padding: 8px 0; border-bottom: 1px solid var(--card-border); color: var(--text-muted);">${prov.method}</td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--card-border); font-weight: bold;">${s.name}</td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--card-border);"><span class="badge ${confidenceClass}">${Math.round((s.confidence || 0)*100)}%</span></td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--card-border); color: var(--text-muted);">${s.source || 'Unknown'}</td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--card-border); color: var(--text-muted);">${s.normalization || 'Canonical'}</td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--card-border);"><span class="badge badge-success">Canonical</span></td>
                         </tr>
                     `;
                 });
+            } else {
+                skillsBody.innerHTML = '<tr><td colspan="5" style="padding: 12px; text-align: center; color: var(--text-muted);">Not Available</td></tr>';
+            }
+
+            // SECTION 6: Experience
+            const expTimeline = document.getElementById('sec6-experience-timeline');
+            expTimeline.innerHTML = '';
+            if (profile.experience && profile.experience.length > 0) {
+                profile.experience.forEach(exp => {
+                    expTimeline.innerHTML += `
+                        <div class="feature-card" style="position: relative;">
+                            <div style="position: absolute; left: -26px; top: 16px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary-light); border: 2px solid var(--bg-color);"></div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                                <div>
+                                    <strong style="font-size: 16px; color: var(--primary-light);">${exp.title || 'Not Available'}</strong>
+                                    <div style="font-size: 13px; font-weight: 600; margin-top: 2px;">${exp.company || 'Not Available'}</div>
+                                </div>
+                                <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">
+                                    📅 ${exp.start || 'N/A'} to ${exp.end || 'Present'}
+                                </div>
+                            </div>
+                            <p style="font-size: 13.5px; line-height: 1.5; color: var(--text-color); margin-top: 8px; white-space: pre-line;">${exp.summary || 'Not Available'}</p>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; border-top: 1px solid var(--card-border); padding-top: 8px; font-size: 12px;">
+                                <span>Source: <strong style="color: var(--primary-light)">${exp.source || 'Unknown'}</strong></span>
+                                <span>Confidence: <strong>${(exp.confidence || 0.85).toFixed(2)}</strong></span>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                expTimeline.innerHTML = '<div style="color: var(--text-muted); padding: 12px;">Not Available</div>';
+            }
+
+            // SECTION 7: Education
+            const eduTimeline = document.getElementById('sec7-education-timeline');
+            eduTimeline.innerHTML = '';
+            if (profile.education && profile.education.length > 0) {
+                profile.education.forEach(edu => {
+                    eduTimeline.innerHTML += `
+                        <div class="feature-card" style="position: relative;">
+                            <div style="position: absolute; left: -26px; top: 16px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary-light); border: 2px solid var(--bg-color);"></div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                                <div>
+                                    <strong style="font-size: 16px; color: var(--primary-light);">${edu.degree || 'Degree Not Available'}</strong>
+                                    <div style="font-size: 13px; font-weight: 600; margin-top: 2px;">${edu.institution || 'Not Available'}</div>
+                                </div>
+                                <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">
+                                    🎓 Grad Year: ${edu.end_year || 'N/A'}
+                                </div>
+                            </div>
+                            <p style="font-size: 13px; color: var(--text-muted);">Field of Study: ${edu.field || 'Not Available'}</p>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; border-top: 1px solid var(--card-border); padding-top: 8px; font-size: 12px;">
+                                <span>Source: <strong style="color: var(--primary-light)">${edu.source || 'Unknown'}</strong></span>
+                                <span>Confidence: <strong>${(edu.confidence || 0.85).toFixed(2)}</strong></span>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                eduTimeline.innerHTML = '<div style="color: var(--text-muted); padding: 12px;">Not Available</div>';
+            }
+
+            // SECTION 8: Provenance Data parsing
+            provenanceData = [];
+            if (profile.provenance) {
+                provenanceData = profile.provenance;
+            }
+            // Bind default values if fields are missing in provenance
+            const expectedFields = ["candidate_id", "full_name", "headline", "years_experience", "location", "links"];
+            expectedFields.forEach(f => {
+                const found = provenanceData.find(p => p.field === f);
+                if (!found && profile[f]) {
+                    provenanceData.push({
+                        field: f,
+                        value: typeof profile[f] === 'object' ? JSON.stringify(profile[f]) : String(profile[f]),
+                        source: "Consolidated_Merge",
+                        method: "Heuristic",
+                        confidence: overallConf,
+                        normalization: "None",
+                        merge_decision: "Consolidated Profile Won"
+                    });
+                }
+            });
+            provCurrentPage = 1;
+            renderProvenanceTable();
+
+            // SECTION 9: Extraction Summary Pct
+            let resumeCount = 0, csvCount = 0, githubCount = 0;
+            provenanceData.forEach(row => {
+                const s = String(row.source).toLowerCase();
+                if (s.includes('resume') || s.includes('pdf') || s.includes('docx')) resumeCount++;
+                else if (s.includes('csv')) csvCount++;
+                else if (s.includes('github') || s.includes('api')) githubCount++;
+            });
+            const totalCount = resumeCount + csvCount + githubCount || 1;
+            const resPct = Math.round((resumeCount / totalCount) * 100);
+            const csvPct = Math.round((csvCount / totalCount) * 100);
+            const gitPct = Math.round((githubCount / totalCount) * 100);
+            
+            document.getElementById('sec9-resume-percentage').innerText = `${resPct}%`;
+            document.getElementById('sec9-csv-percentage').innerText = `${csvPct}%`;
+            document.getElementById('sec9-github-percentage').innerText = `${gitPct}%`;
+
+            // SECTION 10: Validation
+            const valReport = report.validation_report;
+            const warnings = valReport.warnings || [];
+            const errors = valReport.errors || [];
+            
+            const valSchema = document.getElementById('sec10-val-schema');
+            const valEmail = document.getElementById('sec10-val-email');
+            const valPhone = document.getElementById('sec10-val-phone');
+            const valBusiness = document.getElementById('sec10-val-business');
+            const valProjection = document.getElementById('sec10-val-projection');
+
+            // Default all to PASS
+            [valSchema, valEmail, valPhone, valBusiness, valProjection].forEach(el => {
+                el.innerText = 'PASS';
+                el.className = 'badge badge-success';
+            });
+
+            // Parse schema errors
+            if (errors.length > 0) {
+                valSchema.innerText = 'FAIL';
+                valSchema.className = 'badge badge-danger';
             }
             
-            // Raw JSON Block
+            // Parse warnings
+            warnings.forEach(warn => {
+                const w = warn.toLowerCase();
+                if (w.includes('email')) {
+                    valEmail.innerText = 'WARNING';
+                    valEmail.className = 'badge badge-warning';
+                }
+                if (w.includes('phone')) {
+                    valPhone.innerText = 'WARNING';
+                    valPhone.className = 'badge badge-warning';
+                }
+                if (w.includes('country') || w.includes('location') || w.includes('rule')) {
+                    valBusiness.innerText = 'WARNING';
+                    valBusiness.className = 'badge badge-warning';
+                }
+                if (w.includes('projection') || w.includes('alias')) {
+                    valProjection.innerText = 'WARNING';
+                    valProjection.className = 'badge badge-warning';
+                }
+            });
+
+            // SECTION 11: Pipeline Execution Phases
+            const phasesTimeline = document.getElementById('sec11-execution-phases-timeline');
+            phasesTimeline.innerHTML = '';
+            
+            const phaseLogs = data.logs || [];
+            
+            const allPhases = [
+                { name: "Bootstrap", icon: "🚀" },
+                { name: "Input Discovery", icon: "📂" },
+                { name: "Extraction", icon: "🔍" },
+                { name: "Field Classification", icon: "🏷️" },
+                { name: "Normalization", icon: "🔄" },
+                { name: "Entity Resolution", icon: "🧬" },
+                { name: "Merge", icon: "🧬" },
+                { name: "Confidence", icon: "📈" },
+                { name: "Provenance", icon: "📜" },
+                { name: "Business Rules", icon: "💼" },
+                { name: "Projection", icon: "🎯" },
+                { name: "Validation", icon: "✅" },
+                { name: "Serialization", icon: "🗄️" }
+            ];
+
+            allPhases.forEach((pInfo, idx) => {
+                // Filter logs corresponding to this phase
+                const logsForPhase = phaseLogs.filter(line => line.includes(`Phase ${idx}:`) || line.toLowerCase().includes(pInfo.name.toLowerCase()));
+                const logBlockHtml = logsForPhase.length > 0 
+                    ? `<details style="margin-top: 8px;"><summary style="cursor: pointer; font-size: 12px; color: var(--primary-light);">View Execution Logs (${logsForPhase.length})</summary><pre style="font-size: 11px; margin-top: 6px; padding: 10px; background: rgba(0,0,0,0.5);">${logsForPhase.join('\n')}</pre></details>`
+                    : '';
+
+                phasesTimeline.innerHTML += `
+                    <div class="feature-card" style="position: relative;">
+                        <div style="position: absolute; left: -26px; top: 16px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary-light); border: 2px solid var(--bg-color);"></div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="font-size: 14.5px;">${pInfo.icon} Phase ${idx}: ${pInfo.name}</strong>
+                            <span class="badge badge-success">Completed</span>
+                        </div>
+                        ${logBlockHtml}
+                    </div>
+                `;
+            });
+
+            // SECTION 12: Raw JSON Block
             document.getElementById('profile-json-block').innerText = JSON.stringify(profile, null, 2);
             
-            // Errors logging card
-            const errsContainer = document.getElementById('extraction-failures-container');
-            errsContainer.innerHTML = '';
-            
-            const warnings = report.validation_report.warnings || [];
-            const errors = report.validation_report.errors || [];
-            
-            if (errors.length === 0 && warnings.length === 0) {
-                errsContainer.innerText = 'No pipeline execution errors or validation warnings detected.';
-            } else {
-                errors.forEach(err => {
-                    errsContainer.innerHTML += `<div style="color: var(--danger)">❌ Error: ${err}</div>`;
-                });
-                warnings.forEach(warn => {
-                    errsContainer.innerHTML += `<div style="color: var(--warning)">⚠️ Warning: ${warn}</div>`;
-                });
-            }
+            // Trigger Live Output Configuration Reprojection
+            triggerReprojection();
         }
 
         // Copy canonical JSON to clipboard
@@ -1362,6 +2127,337 @@
             a.download = `candidate_profile_${Date.now()}.json`;
             a.click();
             URL.revokeObjectURL(url);
+        }
+
+        // Configuration Panel Helper functions
+        function copyProjectedJSON() {
+            const raw = document.getElementById('projected-live-json').innerText;
+            navigator.clipboard.writeText(raw);
+            alert("Projected JSON copied to clipboard!");
+        }
+
+        function downloadProjectedJSON() {
+            const raw = document.getElementById('projected-live-json').innerText;
+            const blob = new Blob([raw], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `projected_profile_${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function resetRuntimeConfig() {
+            const fields = ["candidate_id", "full_name", "emails", "phones", "location", "headline", "years_experience", "skills", "experience", "education", "links"];
+            fields.forEach(f => {
+                const cb = document.getElementById(`cfg-field-${f}`);
+                if (cb) cb.checked = true;
+                const rn = document.getElementById(`cfg-rename-${f}`);
+                if (rn) rn.value = f;
+            });
+            document.getElementById('cfg-field-provenance').checked = true;
+            document.getElementById('cfg-field-confidence').checked = true;
+            document.getElementById('cfg-norm-phone').value = 'E164';
+            document.getElementById('cfg-norm-skills').value = 'Canonical';
+            document.getElementById('cfg-norm-country').value = 'ISO';
+            document.getElementById('cfg-norm-dates').value = 'YYYY-MM';
+            
+            document.getElementById('cfg-missing-null').checked = true;
+            document.getElementById('cfg-include-confidence').checked = true;
+            document.getElementById('cfg-include-provenance').checked = true;
+            document.getElementById('cfg-show-sources').checked = true;
+            document.getElementById('cfg-show-methods').checked = true;
+            triggerReprojection();
+        }
+
+        async function saveSchemaConfigToServer() {
+            const fields = [];
+            const checkFields = [
+                { id: "candidate_id", path: "candidate_id", type: "string", req: true },
+                { id: "full_name", path: "full_name", type: "string", req: true },
+                { id: "emails", path: "emails", type: "array" },
+                { id: "phones", path: "phones", type: "array" },
+                { id: "location", path: "location", type: "object" },
+                { id: "headline", path: "headline", type: "string" },
+                { id: "years_experience", path: "years_experience", type: "number" },
+                { id: "skills", path: "skills", type: "array" },
+                { id: "experience", path: "experience", type: "array" },
+                { id: "education", path: "education", type: "array" },
+                { id: "links", path: "links", type: "object" }
+            ];
+            
+            checkFields.forEach(f => {
+                const el = document.getElementById(`cfg-field-${f.id}`);
+                if (el && el.checked) {
+                    let renameInput = document.getElementById(`cfg-rename-${f.id}`);
+                    let pathName = renameInput ? renameInput.value.trim() : f.path;
+                    if (!pathName) pathName = f.path;
+                    
+                    fields.push({
+                        path: pathName,
+                        from: f.path,
+                        type: f.type,
+                        required: f.req || false
+                    });
+                }
+            });
+
+            let missingValStrategy = 'null';
+            if (document.getElementById('cfg-missing-omit').checked) missingValStrategy = 'omit';
+            else if (document.getElementById('cfg-missing-error').checked) missingValStrategy = 'error';
+
+            const configObj = {
+                fields: fields,
+                include_confidence: document.getElementById('cfg-include-confidence').checked,
+                include_provenance: document.getElementById('cfg-include-provenance').checked,
+                on_missing: missingValStrategy
+            };
+
+            const blob = new Blob([JSON.stringify(configObj, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'output_schema.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            alert("output_schema.json configuration downloaded successfully!");
+        }
+
+        function switchResultTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.getElementById(`tab-btn-${tabName}`).classList.add('active');
+            document.getElementById(`tab-content-${tabName}`).classList.add('active');
+        }
+
+        function renderTreeView(obj, container) {
+            container.innerHTML = "";
+            const treeRoot = document.createElement("div");
+            treeRoot.appendChild(buildTreeNodes(obj));
+            container.appendChild(treeRoot);
+        }
+
+        function buildTreeNodes(val, label = null) {
+            const node = document.createElement("div");
+            node.style.marginLeft = "16px";
+            node.style.marginTop = "4px";
+
+            const labelSpan = document.createElement("span");
+            if (label) {
+                labelSpan.innerText = `${label}: `;
+                labelSpan.style.fontWeight = "bold";
+                labelSpan.style.color = "var(--primary-light)";
+                node.appendChild(labelSpan);
+            }
+
+            if (val === null) {
+                const valSpan = document.createElement("span");
+                valSpan.innerText = "null";
+                valSpan.style.color = "var(--text-muted)";
+                node.appendChild(valSpan);
+            } else if (Array.isArray(val)) {
+                const valSpan = document.createElement("span");
+                valSpan.innerText = `Array(${val.length})`;
+                valSpan.style.color = "var(--warning)";
+                node.appendChild(valSpan);
+
+                val.forEach((item, idx) => {
+                    node.appendChild(buildTreeNodes(item, `[${idx}]`));
+                });
+            } else if (typeof val === "object") {
+                const valSpan = document.createElement("span");
+                valSpan.innerText = "{...}";
+                valSpan.style.color = "var(--success)";
+                node.appendChild(valSpan);
+
+                Object.keys(val).forEach(key => {
+                    node.appendChild(buildTreeNodes(val[key], key));
+                });
+            } else {
+                const valSpan = document.createElement("span");
+                valSpan.innerText = JSON.stringify(val);
+                valSpan.style.color = "var(--text-color)";
+                node.appendChild(valSpan);
+            }
+            return node;
+        }
+
+        async function triggerReprojection() {
+            if (!pipelineResult || !pipelineResult.canonical_profile) return;
+            
+            const fields = [];
+            const checkFields = [
+                { id: "candidate_id", path: "candidate_id", type: "string", req: true },
+                { id: "full_name", path: "full_name", type: "string", req: true },
+                { id: "emails", path: "emails", type: "array" },
+                { id: "phones", path: "phones", type: "array" },
+                { id: "location", path: "location", type: "object" },
+                { id: "headline", path: "headline", type: "string" },
+                { id: "years_experience", path: "years_experience", type: "number" },
+                { id: "skills", path: "skills", type: "array" },
+                { id: "experience", path: "experience", type: "array" },
+                { id: "education", path: "education", type: "array" },
+                { id: "links", path: "links", type: "object" }
+            ];
+            
+            checkFields.forEach(f => {
+                const el = document.getElementById(`cfg-field-${f.id}`);
+                if (el && el.checked) {
+                    let renameInput = document.getElementById(`cfg-rename-${f.id}`);
+                    let pathName = renameInput ? renameInput.value.trim() : f.path;
+                    if (!pathName) pathName = f.path;
+                    
+                    fields.push({
+                        path: pathName,
+                        from: f.path,
+                        type: f.type,
+                        required: f.req || false
+                    });
+                }
+            });
+
+            let missingValStrategy = 'null';
+            if (document.getElementById('cfg-missing-omit').checked) missingValStrategy = 'omit';
+            else if (document.getElementById('cfg-missing-error').checked) missingValStrategy = 'error';
+
+            const schema_config = {
+                fields: fields,
+                include_confidence: document.getElementById('cfg-include-confidence').checked,
+                include_provenance: document.getElementById('cfg-include-provenance').checked,
+                on_missing: missingValStrategy,
+                phone_norm: document.getElementById('cfg-norm-phone').value,
+                skills_norm: document.getElementById('cfg-norm-skills').value,
+                country_norm: document.getElementById('cfg-norm-country').value,
+                dates_norm: document.getElementById('cfg-norm-dates').value
+            };
+
+            // Dynamic Visibility Toggles
+            const setElDisplay = (id, visible) => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = visible ? '' : 'none';
+            };
+            
+            setElDisplay('panel-sec1', document.getElementById('cfg-field-confidence').checked);
+            setElDisplay('panel-sec3', document.getElementById('cfg-field-emails').checked);
+            setElDisplay('panel-sec4', document.getElementById('cfg-field-phones').checked);
+            setElDisplay('panel-sec5', document.getElementById('cfg-field-skills').checked);
+            setElDisplay('panel-sec6', document.getElementById('cfg-field-experience').checked);
+            setElDisplay('panel-sec7', document.getElementById('cfg-field-education').checked);
+            setElDisplay('panel-sec8', document.getElementById('cfg-field-provenance').checked);
+
+            // Individual field cards
+            const mapCardDisplay = (cardChildIdx, checked) => {
+                const sec2Content = document.querySelector('#panel-sec2 .panel-content');
+                if (sec2Content) {
+                    const card = sec2Content.children[0].children[cardChildIdx];
+                    if (card) card.style.display = checked ? '' : 'none';
+                }
+            };
+            
+            mapCardDisplay(0, document.getElementById('cfg-field-candidate_id').checked);
+            mapCardDisplay(1, document.getElementById('cfg-field-full_name').checked);
+            mapCardDisplay(2, document.getElementById('cfg-field-headline').checked);
+            mapCardDisplay(3, document.getElementById('cfg-field-years_experience').checked);
+            mapCardDisplay(4, document.getElementById('cfg-field-location').checked);
+            mapCardDisplay(5, document.getElementById('cfg-field-links').checked);
+
+            // Rename Titles in Visual Preview
+            const updateCardLabel = (cardChildIdx, defaultLabel, inputId) => {
+                const sec2Content = document.querySelector('#panel-sec2 .panel-content');
+                if (sec2Content) {
+                    const card = sec2Content.children[0].children[cardChildIdx];
+                    if (card) {
+                        const inputEl = document.getElementById(inputId);
+                        const inputVal = inputEl ? inputEl.value.trim() : "";
+                        const titleEl = card.children[0];
+                        if (titleEl) {
+                            titleEl.innerText = inputVal || defaultLabel;
+                        }
+                    }
+                }
+            };
+            updateCardLabel(1, "Full Name", "cfg-rename-full_name");
+
+            const updatePanelTitle = (panelId, defaultTitle, inputId) => {
+                const panel = document.getElementById(panelId);
+                if (panel) {
+                    const headerSpan = panel.querySelector('.panel-header span');
+                    const inputVal = document.getElementById(inputId).value.trim();
+                    if (headerSpan) {
+                        headerSpan.innerText = inputVal ? `🏷️ Section: ${inputVal}` : defaultTitle;
+                    }
+                }
+            };
+            updatePanelTitle('panel-sec3', '📧 Section 3: Emails', 'cfg-rename-emails');
+            updatePanelTitle('panel-sec4', '📞 Section 4: Phones', 'cfg-rename-phones');
+            updatePanelTitle('panel-sec5', '🎯 Section 5: Skills', 'cfg-rename-skills');
+
+            try {
+                const response = await fetch('/api/project', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        canonical_profile: pipelineResult.canonical_profile,
+                        schema_config: schema_config
+                    })
+                });
+
+                if (!response.ok) throw new Error("Reprojection failed.");
+                const data = await response.json();
+                
+                // Update live JSON display
+                document.getElementById('projected-live-json').innerText = JSON.stringify(data.projected_profile, null, 2);
+                
+                // Tree View rendering
+                renderTreeView(data.projected_profile, document.getElementById('tree-view-container'));
+
+                // Dynamically update Section 10 Validation reports
+                const valReport = data.validation_report;
+                const valSchema = document.getElementById('sec10-val-schema');
+                const isValValid = valReport && valReport.is_valid;
+                valSchema.innerText = isValValid ? "PASS" : "FAIL";
+                valSchema.className = `badge ${isValValid ? 'badge-success' : 'badge-danger'}`;
+                
+                const errors = valReport.errors || [];
+                const warnings = valReport.warnings || [];
+                
+                // Re-render Section 10 Validation Badges
+                const valEmail = document.getElementById('sec10-val-email');
+                const valPhone = document.getElementById('sec10-val-phone');
+                const valBusiness = document.getElementById('sec10-val-business');
+                const valProjection = document.getElementById('sec10-val-projection');
+                
+                [valEmail, valPhone, valBusiness, valProjection].forEach(el => {
+                    el.innerText = 'PASS';
+                    el.className = 'badge badge-success';
+                });
+                
+                warnings.forEach(warn => {
+                    const w = warn.toLowerCase();
+                    if (w.includes('email')) {
+                        valEmail.innerText = 'WARNING';
+                        valEmail.className = 'badge badge-warning';
+                    }
+                    if (w.includes('phone')) {
+                        valPhone.innerText = 'WARNING';
+                        valPhone.className = 'badge badge-warning';
+                    }
+                    if (w.includes('country') || w.includes('location')) {
+                        valBusiness.innerText = 'WARNING';
+                        valBusiness.className = 'badge badge-warning';
+                    }
+                    if (w.includes('projection') || w.includes('alias')) {
+                        valProjection.innerText = 'WARNING';
+                        valProjection.className = 'badge badge-warning';
+                    }
+                });
+
+            } catch (e) {
+                console.error("Live configuration projection failed:", e);
+            }
         }
     </script>
 </body>
