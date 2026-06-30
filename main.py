@@ -34,14 +34,20 @@ def main():
             candidate_id=args.candidate_id,
             csv_path=args.csv,
             github_url=args.github,
-            resume_path=args.resume # <--- PASS ARGUMENT
+            resume_path=args.resume
         )
         
+        # Output the pipeline statistics report to logs
+        if "pipeline_report" in result:
+            logger.info("Pipeline Execution Complete. Report:")
+            logger.info(json.dumps(result["pipeline_report"], indent=2))
+            
         # Output the exact schema-valid JSON
         print("\n" + "="*60)
-        print("🏆 FINAL PROJECTED CANONICAL PROFILE 🏆")
+        print("=== FINAL PROJECTED CANONICAL PROFILE ===")
         print("="*60)
-        print(json.dumps(result, indent=2))
+        projected = result.get("projected_profile", {})
+        print(json.dumps(projected, indent=2))
         print("="*60 + "\n")
         
     except Exception as e:

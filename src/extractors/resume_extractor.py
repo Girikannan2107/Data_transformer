@@ -16,6 +16,23 @@ class ResumeExtractor(BaseExtractor):
             "html", "css", "git", "api", "rest", "linux", "agile", "fastapi", "flask", "gemini"
         ]
 
+    def _clean_spaced_out_text(self, text: str) -> str:
+        clean_whitespace = re.sub(r'\s+', ' ', text).strip()
+        words = [w for w in clean_whitespace.split(' ') if w]
+        if not words:
+            return text
+            
+        single_char_words = [w for w in words if len(w) == 1]
+        if len(single_char_words) / len(words) > 0.70:
+            logger.info("Spaced-out PDF text detected. Reconstructing...")
+            normalized = re.sub(r' {2,}', '  ', text)
+            normalized = normalized.replace('  ', ' _WORD_BOUND_ ')
+            normalized = normalized.replace(' ', '')
+            normalized = normalized.replace('_WORD_BOUND_', ' ')
+            reconstructed = re.sub(r'\s+', ' ', normalized).strip()
+            return reconstructed
+        return text
+
     def _extract_text_from_pdf(self, file_path: str) -> str:
         text = ""
         try:
@@ -46,6 +63,9 @@ class ResumeExtractor(BaseExtractor):
         raw_text = self._extract_text_from_pdf(file_path)
         if not raw_text:
             return profile
+            
+        # Reconstruct if text is spaced out
+        raw_text = self._clean_spaced_out_text(raw_text)
 
         # 2. Extract Email using Regex
         email_pattern = r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+'
