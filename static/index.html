@@ -2103,30 +2103,31 @@
                 `;
             });
 
-            // SECTION 12: Raw JSON Block
-            document.getElementById('profile-json-block').innerText = JSON.stringify(profile, null, 2);
-            
             // Trigger Live Output Configuration Reprojection
             triggerReprojection();
         }
 
         // Copy canonical JSON to clipboard
         function copyJSON() {
-            const raw = document.getElementById('profile-json-block').innerText;
-            navigator.clipboard.writeText(raw);
-            alert("JSON copied to clipboard!");
+            const el = document.getElementById('projected-live-json');
+            if (el) {
+                navigator.clipboard.writeText(el.innerText);
+                alert("JSON copied to clipboard!");
+            }
         }
 
         // Download JSON file
         function downloadJSON() {
-            const raw = document.getElementById('profile-json-block').innerText;
-            const blob = new Blob([raw], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `candidate_profile_${Date.now()}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
+            const el = document.getElementById('projected-live-json');
+            if (el) {
+                const blob = new Blob([el.innerText], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `candidate_profile_${Date.now()}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
         }
 
         // Configuration Panel Helper functions
