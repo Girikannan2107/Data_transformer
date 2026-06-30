@@ -8,6 +8,7 @@ from src.config import PipelineConfig
 from src.extractors.csv_extractor import CSVExtractor
 from src.extractors.github_extractor import GitHubExtractor
 from src.extractors.resume_extractor import ResumeExtractor
+from src.extractors.ats_extractor import ATSExtractor
 from src.normalizers.text_normalizer import Normalizer
 from src.engine.merger import MergeEngine
 from src.engine.projection import ProjectionEngine
@@ -19,6 +20,7 @@ from src.models import (
     InternalCandidateProfile, 
     RawCandidateRecord, 
     TrackedField,
+    DomainField,
     NameField,
     EmailField,
     PhoneField,
@@ -29,6 +31,7 @@ from src.models import (
     ExperienceField,
     EducationField
 )
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +46,7 @@ class CandidatePipeline:
         csv_extractor: Optional[CSVExtractor] = None,
         github_extractor: Optional[GitHubExtractor] = None,
         resume_extractor: Optional[ResumeExtractor] = None,
+        ats_extractor: Optional[ATSExtractor] = None,
         normalizer: Optional[Any] = None,
         merger: Optional[Any] = None,
         confidence_engine: Optional[Any] = None,
@@ -56,6 +60,7 @@ class CandidatePipeline:
         self.csv_extractor = csv_extractor or CSVExtractor()
         self.github_extractor = github_extractor or GitHubExtractor()
         self.resume_extractor = resume_extractor or ResumeExtractor()
+        self.ats_extractor = ats_extractor or ATSExtractor()
         self.normalizer = normalizer or Normalizer()
         self.merger = merger or MergeEngine()
         self.confidence_engine = confidence_engine or ConfidenceEngine()
@@ -68,7 +73,8 @@ class CandidatePipeline:
         candidate_id: str,
         csv_path: Optional[str] = None,
         github_url: Optional[str] = None,
-        resume_path: Optional[str] = None
+        resume_path: Optional[str] = None,
+        ats_path: Optional[str] = None
     ) -> Dict[str, Any]:
         
         # ----------------------------
@@ -90,6 +96,8 @@ class CandidatePipeline:
             sources.append(("GitHub", github_url))
         if resume_path:
             sources.append(("PDF Resume", resume_path))
+        if ats_path:
+            sources.append(("ATS", ats_path))
             
         context.log_metric("discovered_sources_count", len(sources))
         context.log_metric("sources", [s[0] for s in sources])
@@ -118,6 +126,8 @@ class CandidatePipeline:
                     profile = self.github_extractor.extract(identifier, candidate_id)
                 elif source_type == "PDF Resume":
                     profile = self.resume_extractor.extract(identifier, candidate_id)
+                elif source_type == "ATS":
+                    profile = self.ats_extractor.extract(identifier, candidate_id)
                 
                 raw_profiles.append(profile)
             except Exception as e:
@@ -178,6 +188,46 @@ class CandidatePipeline:
             classified.education = [EducationField(raw_value=edu.raw_value, canonical_value=edu.canonical_value, provenance=edu.provenance) for edu in raw_profile.education]
             
             classified_profiles.append(classified)
+
+        # ----------------------------
+        # PHASE 3.5: Generate Extraction Report
+        # ----------------------------
+        extraction_report = {}
+        for idx, rp in enumerate(classified_profiles):
+            src_name = "Unknown_Source"
+            if rp.full_name:
+                src_name = rp.full_name.provenance.source
+            elif rp.emails:
+                src_name = rp.emails[0].provenance.source
+            elif rp.skills:
+                src_name = rp.skills[0].provenance.source
+                
+            extraction_report[src_name] = {}
+            if rp.full_name:
+                extraction_report[src_name]["full_name"] = str(rp.full_name.raw_value)
+            if rp.emails:
+                extraction_report[src_name]["emails"] = [str(e.raw_value) for e in rp.emails]
+            if rp.phones:
+                extraction_report[src_name]["phones"] = [str(ph.raw_value) for ph in rp.phones]
+            if rp.location:
+                loc = rp.location.raw_value
+                extraction_report[src_name]["location"] = f"{loc.city}, {loc.region}, {loc.country}" if hasattr(loc, "city") else str(loc)
+            if rp.links:
+                lk = rp.links.raw_value
+                extraction_report[src_name]["links"] = f"github: {lk.github}" if hasattr(lk, "github") else str(lk)
+            if rp.headline:
+                extraction_report[src_name]["headline"] = str(rp.headline.raw_value)
+            if rp.years_experience:
+                extraction_report[src_name]["years_experience"] = str(rp.years_experience.raw_value)
+            if rp.skills:
+                extraction_report[src_name]["skills"] = [str(s.raw_value) for s in rp.skills]
+            if rp.experience:
+                extraction_report[src_name]["experience"] = [f"{exp.raw_value.company} - {exp.raw_value.title}" for exp in rp.experience]
+            if rp.education:
+                extraction_report[src_name]["education"] = [f"{edu.raw_value.institution}" for edu in rp.education]
+
+        logger.info(f"🏆 RAW EXTRACTION REPORT (BEFORE NORMALIZATION/MERGING) 🏆:\n{json.dumps(extraction_report, indent=2)}")
+        context.log_metric("extraction_report", extraction_report)
 
         # ----------------------------
         # PHASE 4: Normalization

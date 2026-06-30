@@ -20,6 +20,7 @@ def main():
     parser.add_argument("--csv", help="Path to recruiter CSV export", type=str)
     parser.add_argument("--github", help="GitHub Profile URL", type=str)
     parser.add_argument("--resume", help="Path to Resume PDF", type=str) # <--- NEW ARGUMENT
+    parser.add_argument("--ats", help="Path to ATS JSON export", type=str)
     parser.add_argument("--config", help="Path to output schema config JSON", required=True, type=str)
     parser.add_argument("--candidate_id", help="Unique ID for the candidate", default="CAND-8832", type=str)
     
@@ -34,7 +35,8 @@ def main():
             candidate_id=args.candidate_id,
             csv_path=args.csv,
             github_url=args.github,
-            resume_path=args.resume
+            resume_path=args.resume,
+            ats_path=args.ats
         )
         
         # Output the pipeline statistics report to logs

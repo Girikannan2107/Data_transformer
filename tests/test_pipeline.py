@@ -217,3 +217,29 @@ def test_pipeline_e2e(tmp_path):
         assert "projected_profile" in result
         assert result["projected_profile"]["candidate_id"] == "CAND-8832"
         assert "full_name" in result["projected_profile"]
+
+def test_ats_extractor(tmp_path):
+    from src.extractors.ats_extractor import ATSExtractor
+    ats_data = {
+        "candidate_id": "CAND-9999",
+        "full_name": "Alice Smith",
+        "email": "alice@smith.com",
+        "phone": "+15550009999",
+        "location": {"city": "New York", "region": "NY", "country": "US"},
+        "skills": ["Python", "Management"],
+        "experience": [
+            {"company": "Google", "title": "Staff Engineer"}
+        ]
+    }
+    ats_file = tmp_path / "ats_profile.json"
+    ats_file.write_text(json.dumps(ats_data))
+    
+    extractor = ATSExtractor()
+    profile = extractor.extract(str(ats_file), "CAND-9999")
+    
+    assert profile.full_name.value == "Alice Smith"
+    assert profile.emails[0].value == "alice@smith.com"
+    assert profile.phones[0].value == "+15550009999"
+    assert profile.location.value.city == "New York"
+    assert profile.skills[0].value == "Python"
+    assert profile.experience[0].value.company == "Google"

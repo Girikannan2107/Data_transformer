@@ -49,6 +49,11 @@ class GitHubExtractor(BaseExtractor):
             "confidence": 0.85
         }
 
+        # URL validation: enforce github.com domain
+        if "github.com" not in profile_url.lower():
+            logger.warning(f"Invalid GitHub URL domain: {profile_url}. Skipping GitHub extraction.")
+            return profile
+
         try:
             username = profile_url.rstrip('/').split('/')[-1]
             if not username:
