@@ -33,6 +33,23 @@ class ResumeExtractor(BaseExtractor):
             return reconstructed
         return text
 
+    def _extract_text_from_docx(self, file_path: str) -> str:
+        import zipfile
+        from xml.etree import ElementTree
+        text = ""
+        try:
+            with zipfile.ZipFile(file_path) as docx:
+                xml_content = docx.read('word/document.xml')
+                root = ElementTree.fromstring(xml_content)
+                paragraphs = []
+                for elem in root.iter():
+                    if elem.tag.endswith('}t') and elem.text:
+                        paragraphs.append(elem.text)
+                text = " ".join(paragraphs)
+        except Exception as e:
+            logger.error(f"Robustness Guard: Failed to read DOCX {file_path}: {e}")
+        return text
+
     def _extract_text_from_pdf(self, file_path: str) -> str:
         text = ""
         try:
@@ -53,14 +70,22 @@ class ResumeExtractor(BaseExtractor):
     def extract(self, file_path: str, candidate_id: str) -> InternalCandidateProfile:
         profile = InternalCandidateProfile(candidate_id=candidate_id)
         
+        is_docx = file_path.lower().endswith('.docx')
+        source_type = "Resume_DOCX" if is_docx else "Resume_PDF"
+        method_type = "DOCX_XML_Extraction" if is_docx else "PyPDF_Regex_Extraction"
+        
         base_prov = {
-            "source": f"Resume_PDF:{file_path}",
-            "method": "PyPDF_Regex_Extraction",
+            "source": f"{source_type}:{file_path}",
+            "method": method_type,
             "confidence": 0.7  # Lower confidence due to unstructured text parsing
         }
 
-        # 1. Read the PDF Text
-        raw_text = self._extract_text_from_pdf(file_path)
+        # 1. Read the text based on file format
+        if is_docx:
+            raw_text = self._extract_text_from_docx(file_path)
+        else:
+            raw_text = self._extract_text_from_pdf(file_path)
+            
         if not raw_text:
             return profile
             
