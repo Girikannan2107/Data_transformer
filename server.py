@@ -5,6 +5,7 @@ import logging
 import uuid
 import json
 import csv
+import shutil
 from typing import Optional
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.responses import HTMLResponse
@@ -77,9 +78,28 @@ async def run_pipeline(
     """
     Executes the 12-phase pipeline using uploaded files and returns the canonical profile, logs, and metrics.
     """
-    csv_path = os.path.join(UPLOAD_DIR, csv_filename) if csv_filename else None
-    resume_path = os.path.join(UPLOAD_DIR, resume_filename) if resume_filename else None
+    # Create unique run directory
+    run_id = f"run_{uuid.uuid4().hex[:8]}"
+    run_dir = os.path.join(UPLOAD_DIR, "runs", run_id)
+    os.makedirs(run_dir, exist_ok=True)
     
+    csv_path = None
+    if csv_filename:
+        src = os.path.join(UPLOAD_DIR, csv_filename)
+        dest = os.path.join(run_dir, "recruiter.csv")
+        if os.path.exists(src):
+            shutil.copy2(src, dest)
+            csv_path = dest
+
+    resume_path = None
+    if resume_filename:
+        src = os.path.join(UPLOAD_DIR, resume_filename)
+        ext = os.path.splitext(resume_filename)[1].lower()
+        dest = os.path.join(run_dir, f"resume{ext}")
+        if os.path.exists(src):
+            shutil.copy2(src, dest)
+            resume_path = dest
+            
     # Setup Log Capturer
     log_capture_string = io.StringIO()
     capture_handler = logging.StreamHandler(log_capture_string)

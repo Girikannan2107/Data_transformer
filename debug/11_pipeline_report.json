@@ -1,0 +1,51 @@
+{
+  "pipeline_id": "a7cb0a8e-1197-4de8-b1dd-cafc6a947d76",
+  "candidate_id": "CAND-8832",
+  "execution_time_ms": 9,
+  "metrics": {
+    "discovered_sources_count": 1,
+    "sources": [
+      "CSV"
+    ],
+    "extraction_report": {
+      "Unknown_Source": {}
+    },
+    "business_rules_validation_failed": true,
+    "missing_fields": [
+      "full_name"
+    ],
+    "validation_errors_count": 0,
+    "validation_warnings_count": 1,
+    "validation_report": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": [
+        "Required field 'full_name' was missing and has been set to null."
+      ]
+    },
+    "execution_time_ms": 9,
+    "pipeline_status": "SUCCESS"
+  },
+  "phase_history": [
+    "Phase 0: Bootstrap",
+    "Phase 1: Input Discovery",
+    "Phase 2: Extraction",
+    "Phase 3: Field Classification",
+    "Phase 4: Normalization",
+    "Phase 5: Entity Resolution",
+    "Phase 6: Merge Engine",
+    "Phase 7: Confidence Engine",
+    "Phase 8: Provenance Engine",
+    "Phase 9: Business Rules",
+    "Phase 10: Projection Engine",
+    "Phase 11: Validation",
+    "Phase 12: Serialization"
+  ],
+  "validation_report": {
+    "is_valid": true,
+    "errors": [],
+    "warnings": [
+      "Required field 'full_name' was missing and has been set to null."
+    ]
+  }
+}

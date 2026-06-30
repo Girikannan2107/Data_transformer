@@ -13,6 +13,7 @@ class GitHubExtractor(BaseExtractor):
         self.headers = {"Accept": "application/vnd.github.v3+json"}
         if self.token:
             self.headers["Authorization"] = f"token {self.token}"
+        self.last_raw_api_data = {}
 
     def _fetch_realtime_skills(self, username: str, base_prov: dict) -> List[TrackedField]:
         skills = []
@@ -68,6 +69,7 @@ class GitHubExtractor(BaseExtractor):
                 return profile
 
             data = response.json()
+            self.last_raw_api_data = data
 
             # Updated with 'field' parameter
             if data.get('name'):

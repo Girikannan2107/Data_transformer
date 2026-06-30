@@ -813,11 +813,6 @@
                 <p id="github-val-message" style="font-size: 12px; color: var(--danger); margin-top: 6px; display: none;">Invalid GitHub URL format.</p>
             </div>
 
-            <!-- Dynamic Candidate selection from CSV -->
-            <div class="url-input-container" id="csv-candidate-select-container" style="display: none;">
-                <h4 style="margin-bottom: 10px; font-size: 14px; font-weight: 600;">4. Target Candidate from CSV</h4>
-                <select class="form-control" id="target-candidate-id"></select>
-            </div>
 
             <button class="btn-run" id="btn-submit-run" onclick="startTransformationRun()" disabled>
                 Run Candidate Transformation
@@ -1100,19 +1095,7 @@
                         <span class="badge badge-success">Ingested</span>
                     `;
                     
-                    // Render candidate choices
-                    if (data.candidates && data.candidates.length > 0) {
-                        const container = document.getElementById('csv-candidate-select-container');
-                        const select = document.getElementById('target-candidate-id');
-                        select.innerHTML = '';
-                        data.candidates.forEach(cand => {
-                            const option = document.createElement('option');
-                            option.value = cand.candidate_id;
-                            option.innerText = `${cand.name} (${cand.candidate_id})`;
-                            select.appendChild(option);
-                        });
-                        container.style.display = 'block';
-                    }
+
                 }
             } catch (e) {
                 previewCard.innerHTML = `
@@ -1215,7 +1198,7 @@
             }, 120);
 
             // Fetch candidate selection
-            const candidateId = document.getElementById('target-candidate-id').value || "CAND-1001";
+            const candidateId = "AUTO";
             const githubUrl = document.getElementById('github-url').value.trim();
             
             const formData = new FormData();

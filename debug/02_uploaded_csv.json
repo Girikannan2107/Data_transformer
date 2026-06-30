@@ -1,0 +1,60 @@
+{
+  "rows": [
+    {
+      "candidate_id": "CAND-1001",
+      "full_name": "Giri Kannan M P",
+      "email": "girikannan10p@gmail.com",
+      "phone": "9943096766",
+      "location": "Salem, Tamil Nadu, India",
+      "headline": "AI & Data Science Engineer",
+      "github": "https://github.com/Girikannan2107",
+      "resume_file": "resume_giri.pdf",
+      "company": "BYTS Services India Pvt Ltd",
+      "job_title": "Python Intern",
+      "skills": "Python|Machine Learning|TensorFlow|LangChain|SQL",
+      "experience_years": "1.0"
+    },
+    {
+      "candidate_id": "CAND-1002",
+      "full_name": "Aarav Sharma",
+      "email": "aarav.sharma@gmail.com",
+      "phone": "98765-11111",
+      "location": "Bengaluru, Karnataka, India",
+      "headline": "Machine Learning Engineer",
+      "github": "https://github.com/aaravsharma",
+      "resume_file": "resume_aarav.pdf",
+      "company": "Infosys",
+      "job_title": "ML Engineer",
+      "skills": "Python|PyTorch|Computer Vision|Docker",
+      "experience_years": "3.5"
+    },
+    {
+      "candidate_id": "CAND-1003",
+      "full_name": "Priya Nair",
+      "email": "PRIYA.NAIR@GMAIL.COM",
+      "phone": "(+91) 9988776655",
+      "location": "Kochi, Kerala",
+      "headline": "Data Engineer",
+      "github": "https://github.com/priyanair",
+      "resume_file": "resume_priya.pdf",
+      "company": "TCS Ltd",
+      "job_title": "Data Engineer",
+      "skills": "Python|SQL|Snowflake|Kafka|Airflow",
+      "experience_years": "4.2"
+    },
+    {
+      "candidate_id": "CAND-1004",
+      "full_name": "Rahul Verma",
+      "email": "",
+      "phone": "",
+      "location": "+91 Delhi",
+      "headline": "Backend Developer",
+      "github": "https://github.com/rahulverma",
+      "resume_file": "resume_rahul.pdf",
+      "company": "Wipro",
+      "job_title": "Software Engineer",
+      "skills": "Java|Spring Boot|PostgreSQL|Redis",
+      "experience_years": "2.8"
+    }
+  ]
+}

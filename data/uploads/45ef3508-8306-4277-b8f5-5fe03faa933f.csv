@@ -1,0 +1,5 @@
+candidate_id,full_name,email,phone,location,headline,github,resume_file,company,job_title,skills,experience_years
+CAND-1001,Giri Kannan M P,girikannan10p@gmail.com,+91 9876543210,"Salem, Tamil Nadu, India",AI & Data Science Engineer,https://github.com/Girikannan2107,resume_giri.pdf,BYTS Services India Pvt Ltd,Python Intern,Python|Machine Learning|TensorFlow|LangChain|SQL,1.0
+CAND-1002,Aarav Sharma,aarav.sharma@gmail.com,98765-11111,"Bengaluru, Karnataka, India",Machine Learning Engineer,https://github.com/aaravsharma,resume_aarav.pdf,Infosys,ML Engineer,Python|PyTorch|Computer Vision|Docker,3.5
+CAND-1003,Priya Nair,PRIYA.NAIR@GMAIL.COM,(+91) 9988776655,"Kochi, Kerala, India",Data Engineer,https://github.com/priyanair,resume_priya.pdf,TCS Ltd,Data Engineer,Python|SQL|Snowflake|Kafka|Airflow,4.2
+CAND-1004,Rahul Verma,,,"Delhi, India",Backend Developer,https://github.com/rahulverma,resume_rahul.pdf,Wipro,Software Engineer,Java|Spring Boot|PostgreSQL|Redis,2.8
