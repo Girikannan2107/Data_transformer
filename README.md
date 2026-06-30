@@ -124,6 +124,18 @@ python main.py --candidate CAND-101 --csv data/recruiter_data.csv --resume data/
    - *Multi-Candidate Mode*: Runs transformation for all candidates in parallel and goes directly to the comparison matrix.
 6. Click **Run Candidate Transformation** to visualize the ingested profiles.
 
+### 4. Running Ingestion via HTTP API (cURL)
+You can also trigger transformations programmatically by sending multipart form POST requests to the backend server (mimicking the UI dashboard):
+
+```bash
+# Execute candidate transformation run via API endpoint
+curl -X POST http://127.0.0.1:8000/api/run \
+  -F "candidate_id=CAND-101" \
+  -F "csv_filename=recruiter_data.csv" \
+  -F "resume_filename=resume.pdf" \
+  -F "github_url=https://github.com/Girikannan2107"
+```
+
 ---
 
 ## 🧪 Running Automated Tests
