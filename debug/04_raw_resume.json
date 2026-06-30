@@ -1,1 +1,425 @@
-{}
+{
+  "candidate_id": "TEMP_0",
+  "full_name": {
+    "raw_value": "Anitharani S",
+    "canonical_value": null,
+    "value": "Anitharani S",
+    "confidence": 0.0,
+    "provenance": {
+      "field": "full_name",
+      "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+      "method": "spaCy_NLP_Extraction",
+      "confidence": 0.8,
+      "normalization_applied": [],
+      "confidence_evolution": [],
+      "agreement_count": 1,
+      "supporting_sources": [],
+      "rejected_sources": [],
+      "timestamp": "2026-06-30T12:50:53.771039",
+      "merge_decision": null
+    },
+    "validation_status": "PENDING"
+  },
+  "location": null,
+  "links": {
+    "raw_value": {
+      "linkedin": "linkedin.com/in/anitharani-sakthivel-01a622299/",
+      "github": "github.com/Anitharani205",
+      "portfolio": null,
+      "other": []
+    },
+    "canonical_value": null,
+    "value": {
+      "linkedin": "linkedin.com/in/anitharani-sakthivel-01a622299/",
+      "github": "github.com/Anitharani205",
+      "portfolio": null,
+      "other": []
+    },
+    "confidence": 0.0,
+    "provenance": {
+      "field": "links",
+      "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+      "method": "spaCy_NLP_Extraction",
+      "confidence": 0.8,
+      "normalization_applied": [],
+      "confidence_evolution": [],
+      "agreement_count": 1,
+      "supporting_sources": [],
+      "rejected_sources": [],
+      "timestamp": "2026-06-30T12:50:53.774036",
+      "merge_decision": null
+    },
+    "validation_status": "PENDING"
+  },
+  "headline": {
+    "raw_value": "Carrer Objective",
+    "canonical_value": null,
+    "value": "Carrer Objective",
+    "confidence": 0.0,
+    "provenance": {
+      "field": "headline",
+      "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+      "method": "spaCy_NLP_Extraction",
+      "confidence": 0.8,
+      "normalization_applied": [],
+      "confidence_evolution": [],
+      "agreement_count": 1,
+      "supporting_sources": [],
+      "rejected_sources": [],
+      "timestamp": "2026-06-30T12:50:53.774036",
+      "merge_decision": null
+    },
+    "validation_status": "PENDING"
+  },
+  "years_experience": null,
+  "emails": [
+    {
+      "raw_value": "anitharanis725@gmail.com",
+      "canonical_value": null,
+      "value": "anitharanis725@gmail.com",
+      "confidence": 0.0,
+      "provenance": {
+        "field": "emails",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [],
+        "confidence_evolution": [],
+        "agreement_count": 1,
+        "supporting_sources": [],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.772039",
+        "merge_decision": null
+      },
+      "validation_status": "PENDING"
+    }
+  ],
+  "phones": [
+    {
+      "raw_value": "7604833064",
+      "canonical_value": null,
+      "value": "7604833064",
+      "confidence": 0.0,
+      "provenance": {
+        "field": "phones",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [],
+        "confidence_evolution": [],
+        "agreement_count": 1,
+        "supporting_sources": [],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.772039",
+        "merge_decision": null
+      },
+      "validation_status": "PENDING"
+    }
+  ],
+  "skills": [
+    {
+      "raw_value": "c",
+      "canonical_value": null,
+      "value": "c",
+      "confidence": 0.0,
+      "provenance": {
+        "field": "skills",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [],
+        "confidence_evolution": [],
+        "agreement_count": 1,
+        "supporting_sources": [],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.778559",
+        "merge_decision": null
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": "java",
+      "canonical_value": null,
+      "value": "java",
+      "confidence": 0.0,
+      "provenance": {
+        "field": "skills",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [],
+        "confidence_evolution": [],
+        "agreement_count": 1,
+        "supporting_sources": [],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.778559",
+        "merge_decision": null
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": "react",
+      "canonical_value": null,
+      "value": "react",
+      "confidence": 0.0,
+      "provenance": {
+        "field": "skills",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [],
+        "confidence_evolution": [],
+        "agreement_count": 1,
+        "supporting_sources": [],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.778559",
+        "merge_decision": null
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": "javascript",
+      "canonical_value": null,
+      "value": "javascript",
+      "confidence": 0.0,
+      "provenance": {
+        "field": "skills",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [],
+        "confidence_evolution": [],
+        "agreement_count": 1,
+        "supporting_sources": [],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.778559",
+        "merge_decision": null
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": "js",
+      "canonical_value": null,
+      "value": "js",
+      "confidence": 0.0,
+      "provenance": {
+        "field": "skills",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [],
+        "confidence_evolution": [],
+        "agreement_count": 1,
+        "supporting_sources": [],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.778559",
+        "merge_decision": null
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": "sql",
+      "canonical_value": null,
+      "value": "sql",
+      "confidence": 0.0,
+      "provenance": {
+        "field": "skills",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [],
+        "confidence_evolution": [],
+        "agreement_count": 1,
+        "supporting_sources": [],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.779563",
+        "merge_decision": null
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": "aws",
+      "canonical_value": null,
+      "value": "aws",
+      "confidence": 0.0,
+      "provenance": {
+        "field": "skills",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [],
+        "confidence_evolution": [],
+        "agreement_count": 1,
+        "supporting_sources": [],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.779563",
+        "merge_decision": null
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": "html",
+      "canonical_value": null,
+      "value": "html",
+      "confidence": 0.0,
+      "provenance": {
+        "field": "skills",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [],
+        "confidence_evolution": [],
+        "agreement_count": 1,
+        "supporting_sources": [],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.780558",
+        "merge_decision": null
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": "css",
+      "canonical_value": null,
+      "value": "css",
+      "confidence": 0.0,
+      "provenance": {
+        "field": "skills",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [],
+        "confidence_evolution": [],
+        "agreement_count": 1,
+        "supporting_sources": [],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.780558",
+        "merge_decision": null
+      },
+      "validation_status": "PENDING"
+    }
+  ],
+  "experience": [],
+  "education": [
+    {
+      "raw_value": {
+        "institution": "Karpagam College Of Enginnering,Coimbatore 2023",
+        "degree": "2027",
+        "field": null,
+        "end_year": null
+      },
+      "canonical_value": null,
+      "value": {
+        "institution": "Karpagam College Of Enginnering,Coimbatore 2023",
+        "degree": "2027",
+        "field": null,
+        "end_year": null
+      },
+      "confidence": 0.0,
+      "provenance": {
+        "field": "education",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [],
+        "confidence_evolution": [],
+        "agreement_count": 1,
+        "supporting_sources": [],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.782179",
+        "merge_decision": null
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": {
+        "institution": "SriValli Varadaraj Matric Hr.Sec.School 2022",
+        "degree": "2023",
+        "field": null,
+        "end_year": null
+      },
+      "canonical_value": null,
+      "value": {
+        "institution": "SriValli Varadaraj Matric Hr.Sec.School 2022",
+        "degree": "2023",
+        "field": null,
+        "end_year": null
+      },
+      "confidence": 0.0,
+      "provenance": {
+        "field": "education",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [],
+        "confidence_evolution": [],
+        "agreement_count": 1,
+        "supporting_sources": [],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.782179",
+        "merge_decision": null
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": {
+        "institution": "HSC Percentage:95",
+        "degree": null,
+        "field": null,
+        "end_year": null
+      },
+      "canonical_value": null,
+      "value": {
+        "institution": "HSC Percentage:95",
+        "degree": null,
+        "field": null,
+        "end_year": null
+      },
+      "confidence": 0.0,
+      "provenance": {
+        "field": "education",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [],
+        "confidence_evolution": [],
+        "agreement_count": 1,
+        "supporting_sources": [],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.782179",
+        "merge_decision": null
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": {
+        "institution": "SriValli Varadaraj Matric Hr.Sec.School 2020",
+        "degree": "2021",
+        "field": null,
+        "end_year": null
+      },
+      "canonical_value": null,
+      "value": {
+        "institution": "SriValli Varadaraj Matric Hr.Sec.School 2020",
+        "degree": "2021",
+        "field": null,
+        "end_year": null
+      },
+      "confidence": 0.0,
+      "provenance": {
+        "field": "education",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [],
+        "confidence_evolution": [],
+        "agreement_count": 1,
+        "supporting_sources": [],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.782179",
+        "merge_decision": null
+      },
+      "validation_status": "PENDING"
+    }
+  ],
+  "overall_confidence": 0.0
+}

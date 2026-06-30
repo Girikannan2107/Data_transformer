@@ -93,10 +93,26 @@ class CandidatePipeline:
         candidate_id: str,
         csv_path: Optional[str] = None,
         github_url: Optional[str] = None,
-        resume_path: Optional[str] = None,
+        resume_path: Optional[str | List[str]] = None,
         ats_path: Optional[str] = None
     ) -> Dict[str, Any]:
         
+        # Convert resume_path to a list of paths
+        resume_paths = []
+        if resume_path:
+            if isinstance(resume_path, list):
+                resume_paths = resume_path
+            elif isinstance(resume_path, str):
+                resume_paths = [p.strip() for p in resume_path.split(",") if p.strip()]
+
+        # Convert github_url to a list of URLs
+        github_urls = []
+        if github_url:
+            if isinstance(github_url, list):
+                github_urls = github_url
+            elif isinstance(github_url, str):
+                github_urls = [u.strip() for u in github_url.split(",") if u.strip()]
+
         # ----------------------------
         # PHASE 0: Bootstrap
         # ----------------------------
@@ -114,15 +130,18 @@ class CandidatePipeline:
             }[i], {})
 
         # Populate Uploaded Raw files
-        if resume_path:
-            try:
-                if resume_path.lower().endswith('.docx'):
-                    resume_text = self.resume_extractor._extract_text_from_docx(resume_path)
-                else:
-                    resume_text = self.resume_extractor._extract_text_from_pdf(resume_path)
-                self._write_debug_json("01_uploaded_resume.json", {"raw_text": resume_text})
-            except Exception:
-                pass
+        if resume_paths:
+            uploaded_texts = []
+            for path in resume_paths:
+                try:
+                    if path.lower().endswith('.docx'):
+                        resume_text = self.resume_extractor._extract_text_from_docx(path)
+                    else:
+                        resume_text = self.resume_extractor._extract_text_from_pdf(path)
+                    uploaded_texts.append({"path": path, "raw_text": resume_text})
+                except Exception:
+                    pass
+            self._write_debug_json("01_uploaded_resume.json", {"resumes": uploaded_texts})
 
         if csv_path:
             try:
@@ -133,7 +152,10 @@ class CandidatePipeline:
             except Exception:
                 pass
 
-        self._write_debug_json("03_uploaded_github.json", {"github_url": github_url})
+        if github_urls:
+            self._write_debug_json("03_uploaded_github.json", {"github_urls": github_urls})
+        else:
+            self._write_debug_json("03_uploaded_github.json", {"github_url": github_url})
 
         # ----------------------------
         # PHASE 1: Input Discovery
@@ -143,10 +165,12 @@ class CandidatePipeline:
         sources = []
         if csv_path:
             sources.append(("CSV", csv_path))
-        if github_url:
-            sources.append(("GitHub", github_url))
-        if resume_path:
-            sources.append(("PDF Resume", resume_path))
+        if github_urls:
+            for g_url in github_urls:
+                sources.append(("GitHub", g_url))
+        if resume_paths:
+            for r_path in resume_paths:
+                sources.append(("PDF Resume", r_path))
         if ats_path:
             sources.append(("ATS", ats_path))
             
@@ -165,53 +189,103 @@ class CandidatePipeline:
         logger.info("Extracting raw profiles...")
         
         raw_profiles = []
-        resume_profile = None
         
-        # 1. Extract Resume first (if available) to get details for auto-matching
-        if resume_path:
-            logger.info(f"Extracting from Resume first: {resume_path}")
+        # 1. Extract all Resumes first (if available) to get details for auto-matching
+        resume_profiles = []
+        for idx, r_path in enumerate(resume_paths):
+            logger.info(f"Extracting from Resume: {r_path}")
             try:
                 # Use a temp candidate ID initially, which will be updated post-auto-matching
-                resume_profile = self.resume_extractor.extract(resume_path, "TEMP_ID")
-                self._write_debug_json("04_raw_resume.json", resume_profile)
+                r_profile = self.resume_extractor.extract(r_path, f"TEMP_{idx}")
+                resume_profiles.append((r_path, r_profile))
             except Exception as e:
-                logger.error(f"Failed extraction from PDF Resume: {e}")
+                logger.error(f"Failed extraction from Resume {r_path}: {e}")
                 
-        # 2. Auto-match candidate_id from CSV using Resume email/name
+        if resume_profiles:
+            # Save the first extracted resume to the debug json for backwards compatibility
+            self._write_debug_json("04_raw_resume.json", resume_profiles[0][1])
+
+        # 1.5 Extract all GitHub profiles first (if available) to get details for auto-matching
+        github_profiles = []
+        for idx, u in enumerate(github_urls):
+            logger.info(f"Extracting live GitHub profile: {u}")
+            try:
+                g_profile = self.github_extractor.extract(u, f"TEMP_GIT_{idx}")
+                github_profiles.append((u, g_profile))
+            except Exception as e:
+                logger.error(f"Failed extraction from GitHub {u}: {e}")
+
+        # 2. Auto-match candidate_id from CSV using Resume and GitHub profiles
         resolved_candidate_id = candidate_id
+        
+        # Map: candidate_id -> (resume_path, resume_profile)
+        candidate_to_resume = {}
+        # Map: candidate_id -> (github_url, github_profile)
+        candidate_to_github = {}
+        
         if csv_path:
             try:
                 import csv
-                resume_emails = []
-                resume_name = ""
-                if resume_profile:
-                    resume_emails = [e.raw_value.lower().strip() for e in resume_profile.emails if e and e.raw_value]
-                    resume_name = resume_profile.full_name.raw_value.lower().strip() if resume_profile.full_name else ""
                 
-                matched_id = None
-                first_id = None
+                # Match resumes to candidates
+                for r_path, r_profile in resume_profiles:
+                    resume_emails = [e.raw_value.lower().strip() for e in r_profile.emails if e and e.raw_value]
+                    resume_name = r_profile.full_name.raw_value.lower().strip() if r_profile.full_name else ""
+                    
+                    matched_id = None
+                    with open(csv_path, mode='r', encoding='utf-8') as f:
+                        reader = csv.DictReader(f)
+                        for row in reader:
+                            row_email = row.get("email", "").lower().strip()
+                            row_name = row.get("full_name", "").lower().strip()
+                            row_cand_id = row.get("candidate_id")
+                            
+                            # Try to match
+                            if (row_email and row_email in resume_emails) or (row_name and resume_name and (resume_name in row_name or row_name in resume_name)):
+                                matched_id = row_cand_id
+                                logger.info(f"Auto-match succeeded: Found Candidate {matched_id} in CSV matching Resume {r_path}.")
+                                break
+                    if matched_id:
+                        candidate_to_resume[matched_id] = (r_path, r_profile)
+                        
+                # Match GitHub profiles to candidates
+                for g_url, g_profile in github_profiles:
+                    username = g_url.rstrip('/').split('/')[-1].lower()
+                    git_name = g_profile.full_name.raw_value.lower().strip() if g_profile.full_name else ""
+                    
+                    matched_id = None
+                    with open(csv_path, mode='r', encoding='utf-8') as f:
+                        reader = csv.DictReader(f)
+                        for row in reader:
+                            row_name = row.get("full_name", "").lower().strip()
+                            row_cand_id = row.get("candidate_id")
+                            
+                            # Match by name or if username is contained in the name
+                            if (row_name and git_name and (git_name in row_name or row_name in git_name)) or (username and username in row_name):
+                                matched_id = row_cand_id
+                                logger.info(f"Auto-match succeeded: Found Candidate {matched_id} in CSV matching GitHub {g_url}.")
+                                break
+                    if matched_id:
+                        candidate_to_github[matched_id] = (g_url, g_profile)
+                        
+                first_csv_id = None
                 with open(csv_path, mode='r', encoding='utf-8') as f:
                     reader = csv.DictReader(f)
                     for row in reader:
-                        row_email = row.get("email", "").lower().strip()
-                        row_name = row.get("full_name", "").lower().strip()
-                        row_cand_id = row.get("candidate_id")
+                        first_csv_id = row.get("candidate_id")
+                        break
                         
-                        if not first_id:
-                            first_id = row_cand_id
-                            
-                        # Try to match
-                        if (row_email and row_email in resume_emails) or (row_name and resume_name and (resume_name in row_name or row_name in resume_name)):
-                            matched_id = row_cand_id
-                            logger.info(f"Auto-match succeeded: Found Candidate {matched_id} in CSV matching Resume email/name.")
-                            break
-                            
-                if matched_id:
-                    resolved_candidate_id = matched_id
-                elif first_id and (candidate_id == "CAND-1001" or not candidate_id):
-                    # If we couldn't match but have a CSV, default candidate ID to the first row of CSV
-                    resolved_candidate_id = first_id
-                    logger.info(f"Auto-match failed. Defaulting to first candidate in CSV: {resolved_candidate_id}")
+                if candidate_id == "AUTO" or not candidate_id:
+                    if candidate_to_resume:
+                        resolved_candidate_id = list(candidate_to_resume.keys())[0]
+                    elif candidate_to_github:
+                        resolved_candidate_id = list(candidate_to_github.keys())[0]
+                    elif first_csv_id:
+                        resolved_candidate_id = first_csv_id
+                        logger.info(f"Auto-match failed. Defaulting to first candidate in CSV: {resolved_candidate_id}")
+                else:
+                    resolved_candidate_id = candidate_id
+                    logger.info(f"Using explicitly requested candidate ID: {resolved_candidate_id}")
             except Exception as e:
                 logger.warning(f"Auto-matching error: {e}")
 
@@ -219,32 +293,79 @@ class CandidatePipeline:
         logger.info(f"Running pipeline under resolved Candidate ID: {resolved_candidate_id}")
         context.candidate_id = resolved_candidate_id
         
-        # Update resume_profile candidate ID and provenance field values
-        if resume_profile:
-            resume_profile.candidate_id = resolved_candidate_id
-            if resume_profile.full_name:
-                resume_profile.full_name.provenance.field = "full_name"
-            for email in resume_profile.emails:
+        # Merge the resume that matched the resolved candidate (if any)
+        if resolved_candidate_id in candidate_to_resume:
+            r_path, matched_resume = candidate_to_resume[resolved_candidate_id]
+            matched_resume.candidate_id = resolved_candidate_id
+            if matched_resume.full_name:
+                matched_resume.full_name.provenance.field = "full_name"
+            for email in matched_resume.emails:
                 email.provenance.field = "emails"
-            for phone in resume_profile.phones:
+            for phone in matched_resume.phones:
                 phone.provenance.field = "phones"
-            for skill in resume_profile.skills:
+            for skill in matched_resume.skills:
                 skill.provenance.field = "skills"
-            if resume_profile.location:
-                resume_profile.location.provenance.field = "location"
-            if resume_profile.links:
-                resume_profile.links.provenance.field = "links"
-            if resume_profile.headline:
-                resume_profile.headline.provenance.field = "headline"
-            for exp in resume_profile.experience:
+            if matched_resume.location:
+                matched_resume.location.provenance.field = "location"
+            if matched_resume.links:
+                matched_resume.links.provenance.field = "links"
+            if matched_resume.headline:
+                matched_resume.headline.provenance.field = "headline"
+            for exp in matched_resume.experience:
                 exp.provenance.field = "experience"
-            for edu in resume_profile.education:
+            for edu in matched_resume.education:
                 edu.provenance.field = "education"
                 
-            raw_profiles.append(resume_profile)
+            raw_profiles.append(matched_resume)
+            logger.info(f"Successfully matched and merged Resume profile ({r_path}) for Candidate ID {resolved_candidate_id}.")
+        else:
+            logger.info(f"No matching resume found for Candidate ID {resolved_candidate_id}. Ingestion will proceed using CSV and active API data.")
             
-        # 3. Extract other active sources using the final resolved candidate_id
-        other_sources = [s for s in sources if s[0] != "PDF Resume"]
+        # Merge the GitHub profile that matched the resolved candidate (or fallback if single profile and no matches)
+        has_merged_github = False
+        if resolved_candidate_id in candidate_to_github:
+            g_url, matched_github = candidate_to_github[resolved_candidate_id]
+            matched_github.candidate_id = resolved_candidate_id
+            
+            if matched_github.full_name:
+                matched_github.full_name.provenance.field = "full_name"
+            if matched_github.headline:
+                matched_github.headline.provenance.field = "headline"
+            if matched_github.location:
+                matched_github.location.provenance.field = "location"
+            if matched_github.links:
+                matched_github.links.provenance.field = "links"
+            for skill in matched_github.skills:
+                skill.provenance.field = "skills"
+                
+            raw_profiles.append(matched_github)
+            has_merged_github = True
+            logger.info(f"Successfully matched and merged GitHub profile ({g_url}) for Candidate ID {resolved_candidate_id}.")
+            self._write_debug_json("06_raw_github.json", matched_github)
+            self._write_debug_json("03_uploaded_github.json", self.github_extractor.last_raw_api_data or {"github_url": g_url})
+        elif github_profiles and len(github_profiles) == 1:
+            g_url, matched_github = github_profiles[0]
+            matched_github.candidate_id = resolved_candidate_id
+            
+            if matched_github.full_name:
+                matched_github.full_name.provenance.field = "full_name"
+            if matched_github.headline:
+                matched_github.headline.provenance.field = "headline"
+            if matched_github.location:
+                matched_github.location.provenance.field = "location"
+            if matched_github.links:
+                matched_github.links.provenance.field = "links"
+            for skill in matched_github.skills:
+                skill.provenance.field = "skills"
+                
+            raw_profiles.append(matched_github)
+            has_merged_github = True
+            logger.info(f"Fallback: Merged single GitHub profile ({g_url}) for Candidate ID {resolved_candidate_id}.")
+            self._write_debug_json("06_raw_github.json", matched_github)
+            self._write_debug_json("03_uploaded_github.json", self.github_extractor.last_raw_api_data or {"github_url": g_url})
+
+        # 3. Extract other active sources using the final resolved candidate_id (excluding PDF Resumes and GitHub profiles we already processed)
+        other_sources = [s for s in sources if s[0] != "PDF Resume" and s[0] != "GitHub"]
         random.shuffle(other_sources)
         
         for source_type, identifier in other_sources:
@@ -253,10 +374,6 @@ class CandidatePipeline:
                 if source_type == "CSV":
                     profile = self.csv_extractor.extract(identifier, resolved_candidate_id)
                     self._write_debug_json("05_raw_csv.json", profile)
-                elif source_type == "GitHub":
-                    profile = self.github_extractor.extract(identifier, resolved_candidate_id)
-                    self._write_debug_json("06_raw_github.json", profile)
-                    self._write_debug_json("03_uploaded_github.json", self.github_extractor.last_raw_api_data or {"github_url": identifier})
                 elif source_type == "ATS":
                     profile = self.ats_extractor.extract(identifier, resolved_candidate_id)
                 
@@ -264,18 +381,22 @@ class CandidatePipeline:
             except Exception as e:
                 logger.error(f"Failed extraction from {source_type}: {e}")
 
-        # Check if we should dynamically run GitHub extractor from Resume links
-        has_github_in_sources = any(s[0] == "GitHub" for s in sources)
-        if not has_github_in_sources and resume_profile and resume_profile.links and resume_profile.links.raw_value.github:
-            inferred_git_url = resume_profile.links.raw_value.github
-            logger.info(f"Dynamically discovered GitHub profile in Resume links: {inferred_git_url}")
-            try:
-                profile = self.github_extractor.extract(inferred_git_url, resolved_candidate_id)
-                raw_profiles.append(profile)
-                self._write_debug_json("06_raw_github.json", profile)
-                self._write_debug_json("03_uploaded_github.json", self.github_extractor.last_raw_api_data or {"github_url": inferred_git_url})
-            except Exception as e:
-                logger.error(f"Failed dynamic GitHub extraction: {e}")
+        # Check if we should dynamically run GitHub extractor from Resume links if not already merged
+        if not has_merged_github:
+            matched_resume_profile = None
+            if resolved_candidate_id in candidate_to_resume:
+                matched_resume_profile = candidate_to_resume[resolved_candidate_id][1]
+                
+            if matched_resume_profile and matched_resume_profile.links and matched_resume_profile.links.raw_value.github:
+                inferred_git_url = matched_resume_profile.links.raw_value.github
+                logger.info(f"Dynamically discovered GitHub profile in Resume links: {inferred_git_url}")
+                try:
+                    profile = self.github_extractor.extract(inferred_git_url, resolved_candidate_id)
+                    raw_profiles.append(profile)
+                    self._write_debug_json("06_raw_github.json", profile)
+                    self._write_debug_json("03_uploaded_github.json", self.github_extractor.last_raw_api_data or {"github_url": inferred_git_url})
+                except Exception as e:
+                    logger.error(f"Failed dynamic GitHub extraction: {e}")
 
         if not raw_profiles:
             logger.error("No raw data was successfully extracted.")

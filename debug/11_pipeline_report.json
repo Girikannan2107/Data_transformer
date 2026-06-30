@@ -1,29 +1,73 @@
 {
-  "pipeline_id": "a7cb0a8e-1197-4de8-b1dd-cafc6a947d76",
-  "candidate_id": "CAND-8832",
-  "execution_time_ms": 9,
+  "pipeline_id": "ce6b1af7-0632-4b44-987e-72554e807ade",
+  "candidate_id": "CAND-103",
+  "execution_time_ms": 10273,
   "metrics": {
-    "discovered_sources_count": 1,
+    "discovered_sources_count": 7,
     "sources": [
-      "CSV"
+      "CSV",
+      "GitHub",
+      "GitHub",
+      "GitHub",
+      "PDF Resume",
+      "PDF Resume",
+      "PDF Resume"
     ],
     "extraction_report": {
+      "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf": {
+        "full_name": "Anitharani S",
+        "emails": [
+          "anitharanis725@gmail.com"
+        ],
+        "phones": [
+          "7604833064"
+        ],
+        "links": "github: github.com/Anitharani205",
+        "headline": "Carrer Objective",
+        "skills": [
+          "c",
+          "java",
+          "react",
+          "javascript",
+          "js",
+          "sql",
+          "aws",
+          "html",
+          "css"
+        ],
+        "education": [
+          "Karpagam College Of Enginnering,Coimbatore 2023",
+          "SriValli Varadaraj Matric Hr.Sec.School 2022",
+          "HSC Percentage:95",
+          "SriValli Varadaraj Matric Hr.Sec.School 2020"
+        ]
+      },
+      "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv": {
+        "full_name": "Anitharani S",
+        "phones": [
+          "7604833064"
+        ],
+        "location": "coimabatore, None, None",
+        "links": "github: https://github.com/Anitharani205",
+        "headline": "web developer",
+        "skills": [
+          "React.js,HTML,CSS,JavaScript"
+        ],
+        "experience": [
+          "Web Development Intern,INTERNPE - Web Developer"
+        ]
+      },
       "Unknown_Source": {}
     },
-    "business_rules_validation_failed": true,
-    "missing_fields": [
-      "full_name"
-    ],
+    "business_rules_validation_failed": false,
     "validation_errors_count": 0,
-    "validation_warnings_count": 1,
+    "validation_warnings_count": 0,
     "validation_report": {
       "is_valid": true,
       "errors": [],
-      "warnings": [
-        "Required field 'full_name' was missing and has been set to null."
-      ]
+      "warnings": []
     },
-    "execution_time_ms": 9,
+    "execution_time_ms": 10273,
     "pipeline_status": "SUCCESS"
   },
   "phase_history": [
@@ -44,8 +88,6 @@
   "validation_report": {
     "is_valid": true,
     "errors": [],
-    "warnings": [
-      "Required field 'full_name' was missing and has been set to null."
-    ]
+    "warnings": []
   }
 }

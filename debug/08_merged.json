@@ -1,14 +1,584 @@
 {
-  "candidate_id": "CAND-8832",
-  "full_name": null,
-  "location": null,
-  "links": null,
-  "headline": null,
+  "candidate_id": "CAND-103",
+  "full_name": {
+    "raw_value": "Anitharani S",
+    "canonical_value": "Anitharani S",
+    "value": "Anitharani S",
+    "confidence": 0.95,
+    "provenance": {
+      "field": "full_name",
+      "source": "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv",
+      "method": "CSV_DictReader",
+      "confidence": 0.95,
+      "normalization_applied": [
+        "TitleCase_CleanWhitespace"
+      ],
+      "confidence_evolution": [
+        "Base extraction confidence: 0.90 (CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv)",
+        "Agreement Bonus: +0.05 (2 matching sources)"
+      ],
+      "agreement_count": 2,
+      "supporting_sources": [
+        "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv",
+        "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf"
+      ],
+      "rejected_sources": [],
+      "timestamp": "2026-06-30T12:51:00.173708",
+      "merge_decision": "Selected value 'Anitharani S' with aggregate confidence score 1.70 supported by 2 source(s) (CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv, Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf). Rejected 0 conflicting evidence source(s)."
+    },
+    "validation_status": "PENDING"
+  },
+  "location": {
+    "raw_value": {
+      "city": "coimabatore",
+      "region": null,
+      "country": null
+    },
+    "canonical_value": null,
+    "value": {
+      "city": "coimabatore",
+      "region": null,
+      "country": null
+    },
+    "confidence": 0.9,
+    "provenance": {
+      "field": "location",
+      "source": "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv",
+      "method": "CSV_DictReader",
+      "confidence": 0.9,
+      "normalization_applied": [],
+      "confidence_evolution": [
+        "Base extraction confidence: 0.90 (CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv)"
+      ],
+      "agreement_count": 1,
+      "supporting_sources": [
+        "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv"
+      ],
+      "rejected_sources": [],
+      "timestamp": "2026-06-30T12:51:00.173708",
+      "merge_decision": "Selected value 'city='coimabatore' region=None country=None' with aggregate confidence score 0.90 supported by 1 source(s) (CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv). Rejected 0 conflicting evidence source(s)."
+    },
+    "validation_status": "PENDING"
+  },
+  "links": {
+    "raw_value": {
+      "linkedin": null,
+      "github": "https://github.com/Anitharani205",
+      "portfolio": null,
+      "other": []
+    },
+    "canonical_value": null,
+    "value": {
+      "linkedin": null,
+      "github": "https://github.com/Anitharani205",
+      "portfolio": null,
+      "other": []
+    },
+    "confidence": 0.85,
+    "provenance": {
+      "field": "links",
+      "source": "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv",
+      "method": "CSV_DictReader",
+      "confidence": 0.85,
+      "normalization_applied": [],
+      "confidence_evolution": [
+        "Base extraction confidence: 0.90 (CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv)",
+        "Conflict Penalty: -0.05 (1 conflicting sources)"
+      ],
+      "agreement_count": 1,
+      "supporting_sources": [
+        "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv"
+      ],
+      "rejected_sources": [
+        {
+          "value": "linkedin='linkedin.com/in/anitharani-sakthivel-01a622299/' github='github.com/Anitharani205' portfolio=None other=[]",
+          "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+          "method": "spaCy_NLP_Extraction",
+          "confidence": 0.8
+        }
+      ],
+      "timestamp": "2026-06-30T12:51:00.173708",
+      "merge_decision": "Selected value 'linkedin=None github='https://github.com/Anitharani205' portfolio=None other=[]' with aggregate confidence score 0.90 supported by 1 source(s) (CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv). Rejected 1 conflicting evidence source(s)."
+    },
+    "validation_status": "PENDING"
+  },
+  "headline": {
+    "raw_value": "web developer",
+    "canonical_value": "Web Developer",
+    "value": "Web Developer",
+    "confidence": 0.85,
+    "provenance": {
+      "field": "headline",
+      "source": "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv",
+      "method": "CSV_DictReader",
+      "confidence": 0.85,
+      "normalization_applied": [
+        "TitleCase_CleanWhitespace"
+      ],
+      "confidence_evolution": [
+        "Base extraction confidence: 0.90 (CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv)",
+        "Conflict Penalty: -0.05 (1 conflicting sources)"
+      ],
+      "agreement_count": 1,
+      "supporting_sources": [
+        "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv"
+      ],
+      "rejected_sources": [
+        {
+          "value": "Carrer Objective",
+          "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+          "method": "spaCy_NLP_Extraction",
+          "confidence": 0.8
+        }
+      ],
+      "timestamp": "2026-06-30T12:51:00.173708",
+      "merge_decision": "Selected value 'Web Developer' with aggregate confidence score 0.90 supported by 1 source(s) (CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv). Rejected 1 conflicting evidence source(s)."
+    },
+    "validation_status": "PENDING"
+  },
   "years_experience": null,
-  "emails": [],
-  "phones": [],
-  "skills": [],
-  "experience": [],
-  "education": [],
-  "overall_confidence": 0.0
+  "emails": [
+    {
+      "raw_value": "anitharanis725@gmail.com",
+      "canonical_value": "anitharanis725@gmail.com",
+      "value": "anitharanis725@gmail.com",
+      "confidence": 0.85,
+      "provenance": {
+        "field": "emails",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.85,
+        "normalization_applied": [
+          "Lowercase_Strip"
+        ],
+        "confidence_evolution": [
+          "Base extraction confidence: 0.80 (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf)",
+          "Validation Bonus: +0.05 (Valid email structure)"
+        ],
+        "agreement_count": 1,
+        "supporting_sources": [
+          "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf"
+        ],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.772039",
+        "merge_decision": "Selected value 'anitharanis725@gmail.com' with aggregate confidence score 0.80 supported by 1 source(s) (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf). Rejected 0 conflicting evidence source(s)."
+      },
+      "validation_status": "PENDING"
+    }
+  ],
+  "phones": [
+    {
+      "raw_value": "7604833064",
+      "canonical_value": "+17604833064",
+      "value": "+17604833064",
+      "confidence": 1.0,
+      "provenance": {
+        "field": "phones",
+        "source": "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv",
+        "method": "CSV_DictReader",
+        "confidence": 1.0,
+        "normalization_applied": [
+          "E164_Format"
+        ],
+        "confidence_evolution": [
+          "Base extraction confidence: 0.90 (CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv)",
+          "Agreement Bonus: +0.05 (2 matching sources)",
+          "Validation Bonus: +0.10 (Valid E164 phone format)"
+        ],
+        "agreement_count": 2,
+        "supporting_sources": [
+          "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv",
+          "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf"
+        ],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:51:00.173708",
+        "merge_decision": "Selected value '+17604833064' with aggregate confidence score 1.70 supported by 2 source(s) (CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv, Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf). Rejected 0 conflicting evidence source(s)."
+      },
+      "validation_status": "PENDING"
+    }
+  ],
+  "skills": [
+    {
+      "raw_value": "c",
+      "canonical_value": "PyTorch",
+      "value": "PyTorch",
+      "confidence": 0.79,
+      "provenance": {
+        "field": "skills",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.79,
+        "normalization_applied": [
+          "Fuzzy_Match_90pct"
+        ],
+        "confidence_evolution": [
+          "Base extraction confidence: 0.80 (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf)",
+          "Fuzzy Normalization Adjustment: -0.01 (90.0% match similarity)"
+        ],
+        "agreement_count": 1,
+        "supporting_sources": [
+          "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf"
+        ],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.778559",
+        "merge_decision": "Selected value 'PyTorch' with aggregate confidence score 0.80 supported by 1 source(s) (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf). Rejected 0 conflicting evidence source(s)."
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": "javascript",
+      "canonical_value": "JavaScript",
+      "value": "JavaScript",
+      "confidence": 0.73,
+      "provenance": {
+        "field": "skills",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.73,
+        "normalization_applied": [
+          "Canonical_Alias_Map",
+          "Fuzzy_Match_80pct"
+        ],
+        "confidence_evolution": [
+          "Base extraction confidence: 0.80 (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf)",
+          "Agreement Bonus: +0.05 (2 matching sources)",
+          "Conflict Penalty: -0.10 (2 conflicting sources)",
+          "Fuzzy Normalization Adjustment: -0.02 (80.0% match similarity)"
+        ],
+        "agreement_count": 2,
+        "supporting_sources": [
+          "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+          "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf"
+        ],
+        "rejected_sources": [
+          {
+            "value": "React.Js,Html,Css,Javascript",
+            "source": "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv",
+            "method": "CSV_DictReader",
+            "confidence": 0.9
+          },
+          {
+            "value": "Java",
+            "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+            "method": "spaCy_NLP_Extraction",
+            "confidence": 0.8
+          }
+        ],
+        "timestamp": "2026-06-30T12:50:53.778559",
+        "merge_decision": "Selected value 'JavaScript' with aggregate confidence score 1.60 supported by 2 source(s) (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf, Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf). Rejected 2 conflicting evidence source(s)."
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": "react",
+      "canonical_value": "React",
+      "value": "React",
+      "confidence": 0.78,
+      "provenance": {
+        "field": "skills",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.78,
+        "normalization_applied": [
+          "Fuzzy_Match_80pct"
+        ],
+        "confidence_evolution": [
+          "Base extraction confidence: 0.80 (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf)",
+          "Fuzzy Normalization Adjustment: -0.02 (80.0% match similarity)"
+        ],
+        "agreement_count": 1,
+        "supporting_sources": [
+          "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf"
+        ],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.778559",
+        "merge_decision": "Selected value 'React' with aggregate confidence score 0.80 supported by 1 source(s) (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf). Rejected 0 conflicting evidence source(s)."
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": "sql",
+      "canonical_value": "Sql",
+      "value": "Sql",
+      "confidence": 0.8,
+      "provenance": {
+        "field": "skills",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [
+          "TitleCase_Fallback"
+        ],
+        "confidence_evolution": [
+          "Base extraction confidence: 0.80 (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf)"
+        ],
+        "agreement_count": 1,
+        "supporting_sources": [
+          "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf"
+        ],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.779563",
+        "merge_decision": "Selected value 'Sql' with aggregate confidence score 0.80 supported by 1 source(s) (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf). Rejected 0 conflicting evidence source(s)."
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": "aws",
+      "canonical_value": "Aws",
+      "value": "Aws",
+      "confidence": 0.8,
+      "provenance": {
+        "field": "skills",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [
+          "TitleCase_Fallback"
+        ],
+        "confidence_evolution": [
+          "Base extraction confidence: 0.80 (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf)"
+        ],
+        "agreement_count": 1,
+        "supporting_sources": [
+          "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf"
+        ],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.779563",
+        "merge_decision": "Selected value 'Aws' with aggregate confidence score 0.80 supported by 1 source(s) (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf). Rejected 0 conflicting evidence source(s)."
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": "html",
+      "canonical_value": "Html",
+      "value": "Html",
+      "confidence": 0.8,
+      "provenance": {
+        "field": "skills",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [
+          "TitleCase_Fallback"
+        ],
+        "confidence_evolution": [
+          "Base extraction confidence: 0.80 (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf)"
+        ],
+        "agreement_count": 1,
+        "supporting_sources": [
+          "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf"
+        ],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.780558",
+        "merge_decision": "Selected value 'Html' with aggregate confidence score 0.80 supported by 1 source(s) (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf). Rejected 0 conflicting evidence source(s)."
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": "css",
+      "canonical_value": "Css",
+      "value": "Css",
+      "confidence": 0.8,
+      "provenance": {
+        "field": "skills",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [
+          "TitleCase_Fallback"
+        ],
+        "confidence_evolution": [
+          "Base extraction confidence: 0.80 (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf)"
+        ],
+        "agreement_count": 1,
+        "supporting_sources": [
+          "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf"
+        ],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.780558",
+        "merge_decision": "Selected value 'Css' with aggregate confidence score 0.80 supported by 1 source(s) (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf). Rejected 0 conflicting evidence source(s)."
+      },
+      "validation_status": "PENDING"
+    }
+  ],
+  "experience": [
+    {
+      "raw_value": {
+        "company": "Web Development Intern,INTERNPE",
+        "title": "Web Developer",
+        "start": null,
+        "end": null,
+        "summary": null
+      },
+      "canonical_value": {
+        "company": "Web Development Intern,Internpe",
+        "title": "Web Developer",
+        "start": null,
+        "end": null,
+        "summary": null
+      },
+      "value": {
+        "company": "Web Development Intern,Internpe",
+        "title": "Web Developer",
+        "start": null,
+        "end": null,
+        "summary": null
+      },
+      "confidence": 0.9,
+      "provenance": {
+        "field": "experience",
+        "source": "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv",
+        "method": "CSV_DictReader",
+        "confidence": 0.9,
+        "normalization_applied": [
+          "Experience_Standardization"
+        ],
+        "confidence_evolution": [
+          "Base extraction confidence: 0.90 (CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv)"
+        ],
+        "agreement_count": 1,
+        "supporting_sources": [
+          "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv"
+        ],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:51:00.173708",
+        "merge_decision": "Selected value 'company='Web Development Intern,Internpe' title='Web Developer' start=None end=None summary=None' with aggregate confidence score 0.90 supported by 1 source(s) (CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv). Rejected 0 conflicting evidence source(s)."
+      },
+      "validation_status": "PENDING"
+    }
+  ],
+  "education": [
+    {
+      "raw_value": {
+        "institution": "Karpagam College Of Enginnering,Coimbatore 2023",
+        "degree": "2027",
+        "field": null,
+        "end_year": null
+      },
+      "canonical_value": {
+        "institution": "Karpagam College Of Enginnering,Coimbatore 2023",
+        "degree": "2027",
+        "field": null,
+        "end_year": null
+      },
+      "value": {
+        "institution": "Karpagam College Of Enginnering,Coimbatore 2023",
+        "degree": "2027",
+        "field": null,
+        "end_year": null
+      },
+      "confidence": 0.8,
+      "provenance": {
+        "field": "education",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [
+          "Education_Standardization"
+        ],
+        "confidence_evolution": [
+          "Base extraction confidence: 0.80 (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf)"
+        ],
+        "agreement_count": 1,
+        "supporting_sources": [
+          "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf"
+        ],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.782179",
+        "merge_decision": "Selected value 'institution='Karpagam College Of Enginnering,Coimbatore 2023' degree='2027' field=None end_year=None' with aggregate confidence score 0.80 supported by 1 source(s) (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf). Rejected 0 conflicting evidence source(s)."
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": {
+        "institution": "SriValli Varadaraj Matric Hr.Sec.School 2022",
+        "degree": "2023",
+        "field": null,
+        "end_year": null
+      },
+      "canonical_value": {
+        "institution": "Srivalli Varadaraj Matric Hr.Sec.School 2022",
+        "degree": "2023",
+        "field": null,
+        "end_year": null
+      },
+      "value": {
+        "institution": "Srivalli Varadaraj Matric Hr.Sec.School 2022",
+        "degree": "2023",
+        "field": null,
+        "end_year": null
+      },
+      "confidence": 0.75,
+      "provenance": {
+        "field": "education",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.75,
+        "normalization_applied": [
+          "Education_Standardization"
+        ],
+        "confidence_evolution": [
+          "Base extraction confidence: 0.80 (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf)",
+          "Conflict Penalty: -0.05 (1 conflicting sources)"
+        ],
+        "agreement_count": 1,
+        "supporting_sources": [
+          "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf"
+        ],
+        "rejected_sources": [
+          {
+            "value": "institution='Srivalli Varadaraj Matric Hr.Sec.School 2020' degree='2021' field=None end_year=None",
+            "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+            "method": "spaCy_NLP_Extraction",
+            "confidence": 0.8
+          }
+        ],
+        "timestamp": "2026-06-30T12:50:53.782179",
+        "merge_decision": "Selected value 'institution='Srivalli Varadaraj Matric Hr.Sec.School 2022' degree='2023' field=None end_year=None' with aggregate confidence score 0.80 supported by 1 source(s) (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf). Rejected 1 conflicting evidence source(s)."
+      },
+      "validation_status": "PENDING"
+    },
+    {
+      "raw_value": {
+        "institution": "HSC Percentage:95",
+        "degree": null,
+        "field": null,
+        "end_year": null
+      },
+      "canonical_value": {
+        "institution": "Hsc Percentage:95",
+        "degree": null,
+        "field": null,
+        "end_year": null
+      },
+      "value": {
+        "institution": "Hsc Percentage:95",
+        "degree": null,
+        "field": null,
+        "end_year": null
+      },
+      "confidence": 0.8,
+      "provenance": {
+        "field": "education",
+        "source": "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf",
+        "method": "spaCy_NLP_Extraction",
+        "confidence": 0.8,
+        "normalization_applied": [
+          "Education_Standardization"
+        ],
+        "confidence_evolution": [
+          "Base extraction confidence: 0.80 (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf)"
+        ],
+        "agreement_count": 1,
+        "supporting_sources": [
+          "Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf"
+        ],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:50:53.782179",
+        "merge_decision": "Selected value 'institution='Hsc Percentage:95' degree=None field=None end_year=None' with aggregate confidence score 0.80 supported by 1 source(s) (Resume_PDF:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\resume_0.pdf). Rejected 0 conflicting evidence source(s)."
+      },
+      "validation_status": "PENDING"
+    }
+  ],
+  "overall_confidence": 0.88
 }

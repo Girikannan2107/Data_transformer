@@ -93,12 +93,17 @@ async def run_pipeline(
 
     resume_path = None
     if resume_filename:
-        src = os.path.join(UPLOAD_DIR, resume_filename)
-        ext = os.path.splitext(resume_filename)[1].lower()
-        dest = os.path.join(run_dir, f"resume{ext}")
-        if os.path.exists(src):
-            shutil.copy2(src, dest)
-            resume_path = dest
+        copied_paths = []
+        filenames = [f.strip() for f in resume_filename.split(",") if f.strip()]
+        for idx, fname in enumerate(filenames):
+            src = os.path.join(UPLOAD_DIR, fname)
+            ext = os.path.splitext(fname)[1].lower()
+            dest = os.path.join(run_dir, f"resume_{idx}{ext}")
+            if os.path.exists(src):
+                shutil.copy2(src, dest)
+                copied_paths.append(dest)
+        if copied_paths:
+            resume_path = ",".join(copied_paths)
             
     # Setup Log Capturer
     log_capture_string = io.StringIO()
@@ -258,6 +263,13 @@ async def get_index():
         return HTMLResponse(content=content)
     except FileNotFoundError:
         return HTMLResponse(content="<h1>Dashboard file not found. Creating static/index.html next...</h1>")
+
+@app.get("/candidate/{candidate_id}")
+async def get_candidate_page(candidate_id: str):
+    """
+    Serves the main SPA index page for candidate URLs.
+    """
+    return await get_index()
 
 if __name__ == "__main__":
     import uvicorn

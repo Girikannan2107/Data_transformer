@@ -4,7 +4,7 @@
       "candidate_id": "CAND-1001",
       "full_name": "Giri Kannan M P",
       "email": "girikannan10p@gmail.com",
-      "phone": "9943096766",
+      "phone": "+91 9876543210",
       "location": "Salem, Tamil Nadu, India",
       "headline": "AI & Data Science Engineer",
       "github": "https://github.com/Girikannan2107",
@@ -12,7 +12,7 @@
       "company": "BYTS Services India Pvt Ltd",
       "job_title": "Python Intern",
       "skills": "Python|Machine Learning|TensorFlow|LangChain|SQL",
-      "experience_years": "1.0"
+      "experience_years": "1"
     },
     {
       "candidate_id": "CAND-1002",
@@ -33,7 +33,7 @@
       "full_name": "Priya Nair",
       "email": "PRIYA.NAIR@GMAIL.COM",
       "phone": "(+91) 9988776655",
-      "location": "Kochi, Kerala",
+      "location": "Kochi, Kerala, India",
       "headline": "Data Engineer",
       "github": "https://github.com/priyanair",
       "resume_file": "resume_priya.pdf",
@@ -47,7 +47,7 @@
       "full_name": "Rahul Verma",
       "email": "",
       "phone": "",
-      "location": "+91 Delhi",
+      "location": "Delhi, India",
       "headline": "Backend Developer",
       "github": "https://github.com/rahulverma",
       "resume_file": "resume_rahul.pdf",
@@ -55,6 +55,34 @@
       "job_title": "Software Engineer",
       "skills": "Java|Spring Boot|PostgreSQL|Redis",
       "experience_years": "2.8"
+    },
+    {
+      "candidate_id": "CAND-102",
+      "full_name": "Madhurithika R K",
+      "email": "madhurithika22@gmail.com",
+      "phone": "9025966647",
+      "location": "madurai",
+      "headline": "AI & Data Science Engineer",
+      "github": "https://github.com/madhurithika22",
+      "resume_file": "Madhu Rithika R K - Resume",
+      "company": "BYTS Services India Pvt Ltd",
+      "job_title": "ML Engineer",
+      "skills": "Python|Machine Learning|TensorFlow|LangChain|SQL",
+      "experience_years": "9"
+    },
+    {
+      "candidate_id": "CAND-103",
+      "full_name": "Anitharani S",
+      "email": "",
+      "phone": "7604833064",
+      "location": "coimabatore",
+      "headline": "web developer",
+      "github": "https://github.com/Anitharani205",
+      "resume_file": "Anitharani Sakthivel Resume new (1)",
+      "company": "Web Development Intern,INTERNPE",
+      "job_title": "Web Developer",
+      "skills": "React.js,HTML,CSS,JavaScript",
+      "experience_years": ""
     }
   ]
 }

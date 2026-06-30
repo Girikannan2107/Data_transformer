@@ -22,3 +22,7 @@ htmlcov/
 # OS files
 .DS_Store
 Thumbs.db
+
+# User data & runs
+data/uploads/
+data/candidates/

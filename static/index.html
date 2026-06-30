@@ -848,11 +848,11 @@
                 <h4 style="margin-bottom: 8px; font-size: 14px; font-weight: 600;">1. Candidate Resume (PDF / DOCX) <span style="color: var(--danger)">*</span></h4>
                 <div class="dropzone" id="dropzone-resume">
                     <div class="dropzone-icon">📄</div>
-                    <h4>Drag & Drop Resume here</h4>
-                    <p>Supports .pdf, .docx files</p>
-                    <input type="file" id="resume-uploader" accept=".pdf,.docx">
+                    <h4>Drag & Drop Resumes here</h4>
+                    <p>Supports .pdf, .docx files (Upload one or multiple resumes)</p>
+                    <input type="file" id="resume-uploader" accept=".pdf,.docx" multiple>
                 </div>
-                <div id="resume-preview-card" style="display: none;"></div>
+                <div id="resume-preview-card" style="display: none; display: flex; flex-direction: column; gap: 8px;"></div>
             </div>
 
             <!-- Required 2: Recruiter CSV Upload -->
@@ -869,14 +869,26 @@
 
             <!-- Optional: GitHub Profile -->
             <div class="url-input-container">
-                <h4 style="margin-bottom: 10px; font-size: 14px; font-weight: 600;">3. Optional GitHub URL</h4>
+                <h4 style="margin-bottom: 10px; font-size: 14px; font-weight: 600;">3. Optional GitHub Profile URLs</h4>
                 <div class="input-row">
                     <span style="font-size: 20px;">🌐</span>
-                    <input type="text" class="form-control" id="github-url" placeholder="https://github.com/username" oninput="validateGithubUrl()">
+                    <input type="text" class="form-control" id="github-url" placeholder="https://github.com/user1, https://github.com/user2" oninput="validateGithubUrl()">
                 </div>
-                <p id="github-val-message" style="font-size: 12px; color: var(--danger); margin-top: 6px; display: none;">Invalid GitHub URL format.</p>
+                <p style="font-size: 11.5px; color: var(--text-muted); margin-top: 4px;">Supports one or multiple URLs (comma-separated)</p>
+                <p id="github-val-message" style="font-size: 12px; color: var(--danger); margin-top: 6px; display: none;">Invalid GitHub URL format (all links must be valid github.com domains).</p>
             </div>
 
+            <!-- Ingestion Mode Selection -->
+            <div class="url-input-container">
+                <h4 style="margin-bottom: 8px; font-size: 14px; font-weight: 600;">4. Execution / Ingestion Mode</h4>
+                <select id="execution-mode" class="form-control" style="background: var(--bg-light); border: 1px solid var(--card-border); color: var(--text-color); font-weight: 600; padding: 10px 16px; border-radius: 12px; font-size: 13.5px; outline: none; cursor: pointer; transition: all 0.3s ease;">
+                    <option value="SINGLE">Single Candidate Mode (Interactive Preloading)</option>
+                    <option value="PARALLEL">Multi-Candidate Mode (Parallel Ingestion Dashboard)</option>
+                </select>
+                <p style="font-size: 11.5px; color: var(--text-muted); margin-top: 6px;">
+                    Choose PARALLEL mode to run all pipeline instances simultaneously and land directly on the comparison matrix.
+                </p>
+            </div>
 
             <button class="btn-run" id="btn-submit-run" onclick="startTransformationRun()" disabled>
                 Run Candidate Transformation
@@ -915,14 +927,27 @@
                     </div>
                 </div>
             </div>
-            <div style="display: flex; gap: 12px; align-items: center;">
+            <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+                <!-- Candidate Selector Dropdown -->
+                <div style="display: flex; gap: 10px; align-items: center; background: var(--card-bg); border: 1px solid var(--card-border); padding: 8px 16px; border-radius: 12px; backdrop-filter: blur(8px);">
+                    <label for="candidate-selector" style="font-size: 13px; font-weight: 700; color: var(--primary-light); white-space: nowrap;">👤 Choose Profile:</label>
+                    <select id="candidate-selector" class="form-control" style="width: 250px; margin: 0; padding: 6px 12px; font-size: 13px; font-weight: 600; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); color: var(--text-color);" onchange="handleCandidateSelectionChange()">
+                    </select>
+                </div>
                 <span id="result-overall-confidence-badge" class="badge" style="font-size: 14px; padding: 6px 12px; font-weight: bold;">Score: 0.0</span>
                 <button class="btn-panel-action" style="background: transparent; border-color: var(--card-border); color: var(--text-color);" onclick="navigateToHome()">🔄 Run Again</button>
             </div>
         </div>
 
+        <!-- Relocated Navigation Tabs -->
+        <div style="display: flex; border-bottom: 1px solid var(--card-border); gap: 8px; margin-bottom: 24px;">
+            <button class="tab-btn active" id="tab-btn-visual" onclick="switchResultTab('visual')">🎨 Visual Preview</button>
+            <button class="tab-btn" id="tab-btn-json" onclick="switchResultTab('json')">🌐 Projected JSON</button>
+            <button class="tab-btn" id="tab-btn-tree" onclick="switchResultTab('tree')">🧬 Tree View</button>
+        </div>
+
         <!-- Split Grid Container -->
-        <div style="display: grid; grid-template-columns: 380px 1fr; gap: 32px; align-items: start;">
+        <div id="single-candidate-container" style="display: grid; grid-template-columns: 380px 1fr; gap: 32px; align-items: start;">
             
             <!-- LEFT PANEL: Projection Configuration -->
             <div style="display: flex; flex-direction: column; gap: 20px;">
@@ -1101,18 +1126,11 @@
                 </div>
             </div>
 
-            <!-- RIGHT PANEL: Tabs switcher and Candidate Dashboard Preview -->
+            <!-- RIGHT PANEL: Candidate Dashboard Preview -->
             <div style="display: flex; flex-direction: column; gap: 24px;">
-                
-                <!-- Navigation Tabs -->
-                <div style="display: flex; border-bottom: 1px solid var(--card-border); gap: 8px; margin-bottom: 8px;">
-                    <button class="tab-btn active" id="tab-btn-visual" onclick="switchResultTab('visual')">🎨 Visual Preview</button>
-                    <button class="tab-btn" id="tab-btn-json" onclick="switchResultTab('json')">🌐 Projected JSON</button>
-                    <button class="tab-btn" id="tab-btn-tree" onclick="switchResultTab('tree')">🧬 Tree View</button>
-                </div>
 
                 <!-- Visual Preview Content (Default) -->
-                <div class="tab-content active" id="tab-content-visual" style="display: flex; flex-direction: column; gap: 24px;">
+                <div class="tab-content active" id="single-tab-content-visual" style="display: flex; flex-direction: column; gap: 24px; width: 100%;">
 
             <!-- SECTION 1: Overall Confidence -->
             <div class="panel expanded" id="panel-sec1">
@@ -1373,7 +1391,7 @@
                 </div> <!-- End tab-content-visual -->
 
                 <!-- JSON Content Tab -->
-                <div class="tab-content" id="tab-content-json">
+                <div class="tab-content" id="single-tab-content-json" style="display: none;">
                     <div class="panel expanded" id="panel-projected-json">
                         <div class="panel-header" style="cursor: default;">
                             <span>🗂️ Projected JSON Canonical Output</span>
@@ -1389,7 +1407,7 @@
                 </div>
 
                 <!-- Tree View Content Tab -->
-                <div class="tab-content" id="tab-content-tree">
+                <div class="tab-content" id="single-tab-content-tree" style="display: none;">
                     <div class="panel expanded" id="panel-tree-view">
                         <div class="panel-header" style="cursor: default;">
                             <span>🧬 Interactive Schema Tree View</span>
@@ -1402,6 +1420,87 @@
 
             </div> <!-- End RIGHT PANEL -->
         </div> <!-- End Split Grid Container -->
+
+        <!-- Multi-Candidate Comparison View -->
+        <div id="multi-candidate-container" style="display: none; flex-direction: column; gap: 32px; animation: fadeIn 0.5s ease-in-out;">
+            
+            <!-- TAB CONTENT 1: VISUAL (Default) -->
+            <div class="tab-content active" id="multi-tab-content-visual">
+                <!-- Loading Indicator -->
+                <div id="multi-loading-indicator" style="display: none; text-align: center; padding: 60px 24px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px;">
+                    <div style="font-size: 32px; margin-bottom: 16px; animation: float 2s ease-in-out infinite;">🧬</div>
+                    <h3 style="font-weight: 700; font-size: 20px;">Processing & Syncing Candidate Profiles...</h3>
+                    <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 8px;">Preloading candidate details from the recruiter database export.</p>
+                    <div class="shimmer-bar" style="max-width: 400px; margin: 24px auto 0 auto;"></div>
+                </div>
+
+                <!-- Main Comparison Dashboard -->
+                <div id="multi-comparison-dashboard" style="display: flex; flex-direction: column; gap: 32px;">
+                    <!-- Section 12: Ingestion Matrix -->
+                    <div class="panel expanded" id="panel-sec12">
+                        <div class="panel-header" style="cursor: default;">
+                            <span>📊 Section 12: Multi-Candidate Ingestion Matrix</span>
+                        </div>
+                        <div class="panel-content" style="overflow-x: auto; padding: 24px;">
+                            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13.5px;" id="sec12-comparison-table">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid var(--card-border);">
+                                        <th style="padding: 12px; font-weight: 700; color: var(--primary-light);">ID</th>
+                                        <th style="padding: 12px; font-weight: 700;">Full Name</th>
+                                        <th style="padding: 12px; font-weight: 700;">Email</th>
+                                        <th style="padding: 12px; font-weight: 700;">Phone</th>
+                                        <th style="padding: 12px; font-weight: 700;">Location</th>
+                                        <th style="padding: 12px; font-weight: 700;">Headline</th>
+                                        <th style="padding: 12px; font-weight: 700; text-align: center;">Experience</th>
+                                        <th style="padding: 12px; font-weight: 700;">Top Skills</th>
+                                        <th style="padding: 12px; font-weight: 700; text-align: center;">Confidence</th>
+                                        <th style="padding: 12px; font-weight: 700; text-align: center;">Validation</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="color: var(--text-color);">
+                                    <!-- Multi-candidate rows will be injected dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Section 13: Parsed Profiles Overview -->
+                    <div style="font-size: 20px; font-weight: 800; color: var(--primary-light);">👥 Parsed Candidate Profiles Overview</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px;" id="multi-cards-container">
+                        <!-- Cards will be injected dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT 2: JSON -->
+            <div class="tab-content" id="multi-tab-content-json" style="display: none;">
+                <div class="panel expanded" id="panel-projected-json-multi">
+                    <div class="panel-header" style="cursor: default;">
+                        <span>🗂️ Projected JSON Canonical Output (All Candidates)</span>
+                        <div style="display: flex; gap: 12px;">
+                            <button class="btn-panel-action" style="padding: 4px 10px; font-size: 11px;" onclick="copyMultiProjectedJSON()">📋 Copy JSON</button>
+                            <button class="btn-panel-action" style="padding: 4px 10px; font-size: 11px;" onclick="downloadMultiProjectedJSON()">📥 Download JSON</button>
+                        </div>
+                    </div>
+                    <div class="panel-content" style="padding: 0;">
+                        <pre style="margin: 0; border: none; border-radius: 0;"><code id="projected-live-json-multi" style="color: #c084fc;">[]</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT 3: TREE VIEW -->
+            <div class="tab-content" id="multi-tab-content-tree" style="display: none;">
+                <div class="panel expanded" id="panel-tree-view-multi">
+                    <div class="panel-header" style="cursor: default;">
+                        <span>🧬 Interactive Schema Tree View (All Candidates)</span>
+                    </div>
+                    <div class="panel-content" id="tree-view-container-multi" style="font-family: var(--font-code); font-size: 13px; color: var(--text-color); max-height: 600px; overflow-y: auto;">
+                        <!-- Tree View will be rendered dynamically here -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div> <!-- End Page 4: page-result -->
 
     <!-- Floating Button: Generate output_schema.json -->
@@ -1411,10 +1510,13 @@
 
     <script>
         // State variables
-        let uploadedResume = null;
+        let uploadedResumes = [];
         let uploadedCSV = null;
         let pipelineResult = null;
         let isGithubUrlValid = true;
+        let uploadedCandidates = [];
+        let processedCandidates = {};
+        let selectedCandidateId = 'AUTO';
 
         // Pagination/Sorting for Provenance Table
         let provenanceData = [];
@@ -1425,6 +1527,7 @@
 
         // Navigation
         function navigateToHome() {
+            window.history.pushState(null, "", "/");
             document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
             document.getElementById('page-home').classList.add('active');
             resetForm();
@@ -1442,7 +1545,7 @@
 
         // Input reset
         function resetForm() {
-            uploadedResume = null;
+            uploadedResumes = [];
             uploadedCSV = null;
             pipelineResult = null;
             isGithubUrlValid = true;
@@ -1479,49 +1582,95 @@
                 zone.style.borderColor = 'var(--card-border)';
                 if (e.dataTransfer.files.length > 0) {
                     input.files = e.dataTransfer.files;
-                    handleFileUpload(id, input.files[0]);
+                    handleFileUpload(id, input.files);
                 }
             });
             input.addEventListener('change', () => {
                 if (input.files.length > 0) {
-                    handleFileUpload(id, input.files[0]);
+                    handleFileUpload(id, input.files);
                 }
             });
         }
 
-        async function handleFileUpload(type, file) {
-            const formData = new FormData();
-            formData.append('file', file);
-            
+        async function handleFileUpload(type, files) {
             const previewCard = document.getElementById(`${type}-preview-card`);
-            previewCard.style.display = 'block';
-            previewCard.innerHTML = `<div class="preview-info"><span>⏳</span> Ingesting ${file.name}...</div>`;
+            previewCard.style.display = 'flex';
             
-            try {
-                const response = await fetch('/api/upload', {
-                    method: 'POST',
-                    body: formData
-                });
+            if (type === 'resume') {
+                previewCard.innerHTML = '';
+                uploadedResumes = [];
                 
-                if (!response.ok) throw new Error("Ingestion Failed.");
-                const data = await response.json();
-                
-                if (type === 'resume') {
-                    uploadedResume = data.saved_filename;
-                    previewCard.innerHTML = `
-                        <div class="preview-info">
-                            <span>📄</span>
-                            <div>
-                                <strong>${data.original_name}</strong>
-                                <div style="font-size: 11px; color: var(--text-muted);">${(data.size_bytes/1024).toFixed(1)} KB</div>
+                for (let file of files) {
+                    const rowId = 'resume-' + Math.random().toString(36).substring(2, 9);
+                    const row = document.createElement('div');
+                    row.className = 'preview-card';
+                    row.id = rowId;
+                    row.style.background = 'var(--bg-light)';
+                    row.style.border = '1px solid var(--card-border)';
+                    row.style.borderRadius = '8px';
+                    row.style.padding = '10px 16px';
+                    row.style.display = 'flex';
+                    row.style.justifyContent = 'space-between';
+                    row.style.alignItems = 'center';
+                    row.style.gap = '12px';
+                    row.style.width = '100%';
+                    
+                    row.innerHTML = `<div class="preview-info"><span>⏳</span> Ingesting ${file.name}...</div>`;
+                    previewCard.appendChild(row);
+                    
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    
+                    try {
+                        const response = await fetch('/api/upload', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        if (!response.ok) throw new Error("Failed");
+                        const data = await response.json();
+                        uploadedResumes.push(data.saved_filename);
+                        
+                        row.innerHTML = `
+                            <div class="preview-info" style="display: flex; align-items: center; gap: 8px;">
+                                <span>📄</span>
+                                <div>
+                                    <strong>${data.original_name}</strong>
+                                    <div style="font-size: 11px; color: var(--text-muted);">${(data.size_bytes/1024).toFixed(1)} KB</div>
+                                </div>
                             </div>
-                        </div>
-                        <span class="badge badge-success">Ingested</span>
-                    `;
-                } else {
+                            <span class="badge badge-success">Ingested</span>
+                        `;
+                    } catch (e) {
+                        row.innerHTML = `
+                            <div class="preview-info">
+                                <span>❌</span>
+                                <span style="color: var(--danger)">Failed to process ${file.name}</span>
+                            </div>
+                            <span class="badge badge-danger">Error</span>
+                        `;
+                    }
+                }
+            } else {
+                const file = files[0];
+                previewCard.style.display = 'block';
+                previewCard.innerHTML = `<div class="preview-info" style="display: flex; align-items: center; gap: 8px;"><span>⏳</span> Ingesting ${file.name}...</div>`;
+                
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                try {
+                    const response = await fetch('/api/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    if (!response.ok) throw new Error("Failed");
+                    const data = await response.json();
+                    
                     uploadedCSV = data.saved_filename;
+                    uploadedCandidates = data.candidates || [];
+                    
                     previewCard.innerHTML = `
-                        <div class="preview-info">
+                        <div class="preview-info" style="display: flex; align-items: center; gap: 8px;">
                             <span>📊</span>
                             <div>
                                 <strong>${data.original_name}</strong>
@@ -1530,41 +1679,43 @@
                         </div>
                         <span class="badge badge-success">Ingested</span>
                     `;
+                } catch (e) {
+                    previewCard.innerHTML = `
+                        <div class="preview-info">
+                            <span>❌</span>
+                            <span style="color: var(--danger)">Failed to process CSV file</span>
+                        </div>
+                        <span class="badge badge-danger">Error</span>
+                    `;
                 }
-            } catch (e) {
-                previewCard.innerHTML = `
-                    <div class="preview-info">
-                        <span>❌</span>
-                        <span style="color: var(--danger)">Failed to process file</span>
-                    </div>
-                    <span class="badge badge-danger">Error</span>
-                `;
             }
             validateInputs();
         }
 
         function validateGithubUrl() {
-            const url = document.getElementById('github-url').value.trim();
+            const urlVal = document.getElementById('github-url').value.trim();
             const valMsg = document.getElementById('github-val-message');
-            if (url === "") {
+            if (urlVal === "") {
                 isGithubUrlValid = true;
                 valMsg.style.display = 'none';
             } else {
-                const match = url.match(/github\.com\/[a-zA-Z0-9_-]+/i);
-                if (match) {
-                    isGithubUrlValid = true;
-                    valMsg.style.display = 'none';
-                } else {
-                    isGithubUrlValid = false;
-                    valMsg.style.display = 'block';
+                const urls = urlVal.split(',').map(u => u.trim()).filter(Boolean);
+                let allValid = true;
+                for (let u of urls) {
+                    if (!u.match(/github\.com\/[a-zA-Z0-9_-]+/i)) {
+                        allValid = false;
+                        break;
+                    }
                 }
+                isGithubUrlValid = allValid;
+                valMsg.style.display = allValid ? 'none' : 'block';
             }
             validateInputs();
         }
 
         function validateInputs() {
             const runBtn = document.getElementById('btn-submit-run');
-            if (uploadedResume && uploadedCSV && isGithubUrlValid) {
+            if (uploadedResumes.length > 0 && uploadedCSV && isGithubUrlValid) {
                 runBtn.removeAttribute('disabled');
             } else {
                 runBtn.setAttribute('disabled', 'true');
@@ -1574,7 +1725,7 @@
         // Launch run
         async function startTransformationRun() {
             const alertBox = document.getElementById('form-validation-alert');
-            if (!uploadedResume || !uploadedCSV) {
+            if (uploadedResumes.length === 0 || !uploadedCSV) {
                 alertBox.innerText = "Error: Resume and Recruiter CSV are both required Ingestion inputs.";
                 alertBox.classList.add('active');
                 return;
@@ -1591,72 +1742,210 @@
             document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
             document.getElementById('page-running').classList.add('active');
             
+            // Get selected mode and inputs
+            const mode = document.getElementById('execution-mode').value;
+            const githubUrl = document.getElementById('github-url').value.trim();
+            
+            // Clear cache
+            processedCandidates = {};
+            
             // Render loading workflow
             const container = document.getElementById('running-steps-container');
             container.innerHTML = '';
-            const phases = [
-                "Bootstrap", "Input Discovery", "Extraction", "Field Classification",
-                "Normalization", "Entity Resolution", "Merge", "Confidence",
-                "Provenance", "Business Rules", "Projection", "Validation", "Serialization"
-            ];
             
-            phases.forEach((phase, idx) => {
-                const row = document.createElement('div');
-                row.className = 'running-step';
-                row.id = `step-row-${idx}`;
-                row.innerHTML = `
-                    <span>⚙️ Phase ${idx}: ${phase}</span>
-                    <span class="step-status" id="step-status-${idx}">Waiting...</span>
+            let animInterval = null;
+            
+            if (mode === 'PARALLEL') {
+                const headerRow = document.createElement('div');
+                headerRow.className = 'running-step active';
+                headerRow.innerHTML = `
+                    <span>⚙️ Parallel Extraction Status:</span>
+                    <span class="step-status" id="parallel-progress-status" style="font-weight: 700; color: var(--primary-light);">Starting parallel runs for ${uploadedCandidates.length} candidates...</span>
                 `;
-                container.appendChild(row);
-            });
-            
-            let progressIdx = 0;
-            const animInterval = setInterval(() => {
-                if (progressIdx < phases.length) {
-                    if (progressIdx > 0) {
-                        const prev = document.getElementById(`step-row-${progressIdx-1}`);
-                        prev.className = 'running-step completed';
-                        document.getElementById(`step-status-${progressIdx-1}`).innerText = 'Completed';
-                    }
-                    const curr = document.getElementById(`step-row-${progressIdx}`);
-                    curr.className = 'running-step active';
-                    document.getElementById(`step-status-${progressIdx}`).innerText = 'Running...';
-                    progressIdx++;
-                } else {
-                    clearInterval(animInterval);
-                }
-            }, 120);
-
-            const candidateId = "AUTO";
-            const githubUrl = document.getElementById('github-url').value.trim();
-            
-            const formData = new FormData();
-            formData.append('candidate_id', candidateId);
-            formData.append('csv_filename', uploadedCSV);
-            formData.append('resume_filename', uploadedResume);
-            if (githubUrl) formData.append('github_url', githubUrl);
-            
-            try {
-                const response = await fetch('/api/run', {
-                    method: 'POST',
-                    body: formData
+                container.appendChild(headerRow);
+                
+                uploadedCandidates.forEach(cand => {
+                    const row = document.createElement('div');
+                    row.className = 'running-step';
+                    row.id = `cand-row-${cand.candidate_id}`;
+                    row.innerHTML = `
+                        <span>👤 Ingesting Candidate ${cand.candidate_id} (${cand.name})</span>
+                        <span class="step-status" id="cand-status-${cand.candidate_id}" style="font-size: 12px; font-weight: bold; color: var(--text-muted);">Waiting...</span>
+                    `;
+                    container.appendChild(row);
                 });
                 
-                if (!response.ok) throw new Error("ETL Transformation Ingestion crashed.");
-                const data = await response.json();
-                pipelineResult = data;
+                let completedCount = 0;
+                const promises = uploadedCandidates.map(async cand => {
+                    const candRow = document.getElementById(`cand-row-${cand.candidate_id}`);
+                    const statusSpan = document.getElementById(`cand-status-${cand.candidate_id}`);
+                    if (candRow) candRow.className = 'running-step active';
+                    if (statusSpan) {
+                        statusSpan.innerText = 'Running...';
+                        statusSpan.style.color = 'var(--primary-light)';
+                    }
+                    
+                    const candFormData = new FormData();
+                    candFormData.append('candidate_id', cand.candidate_id);
+                    candFormData.append('csv_filename', uploadedCSV);
+                    candFormData.append('resume_filename', uploadedResumes.join(','));
+                    if (githubUrl) candFormData.append('github_url', githubUrl);
+                    
+                    try {
+                        const response = await fetch('/api/run', {
+                            method: 'POST',
+                            body: candFormData
+                        });
+                        if (!response.ok) throw new Error("Crashed");
+                        const data = await response.json();
+                        processedCandidates[cand.candidate_id] = data;
+                        
+                        completedCount++;
+                        document.getElementById('parallel-progress-status').innerText = `Ingesting: Completed ${completedCount}/${uploadedCandidates.length} profiles`;
+                        
+                        if (candRow) candRow.className = 'running-step completed';
+                        if (statusSpan) {
+                            statusSpan.innerText = 'Success';
+                            statusSpan.style.color = 'var(--success)';
+                        }
+                    } catch (err) {
+                        completedCount++;
+                        document.getElementById('parallel-progress-status').innerText = `Ingesting: Completed ${completedCount}/${uploadedCandidates.length} profiles`;
+                        if (candRow) candRow.className = 'running-step failed';
+                        if (statusSpan) {
+                            statusSpan.innerText = 'Failed';
+                            statusSpan.style.color = 'var(--danger)';
+                        }
+                    }
+                });
                 
-                clearInterval(animInterval);
-                renderResults(data);
+                try {
+                    await Promise.all(promises);
+                    
+                    selectedCandidateId = 'MULTI';
+                    pipelineResult = Object.values(processedCandidates)[0] || null;
+                    
+                    const selector = document.getElementById('candidate-selector');
+                    selector.innerHTML = '';
+                    uploadedCandidates.forEach(cand => {
+                        const opt = document.createElement('option');
+                        opt.value = cand.candidate_id;
+                        opt.innerText = `${cand.candidate_id}: ${cand.name}`;
+                        selector.appendChild(opt);
+                    });
+                    const optMulti = document.createElement('option');
+                    optMulti.value = 'MULTI';
+                    optMulti.innerText = 'Show All Candidates (Compare)';
+                    optMulti.selected = true;
+                    selector.appendChild(optMulti);
+                    
+                    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                    const visBtn = document.getElementById('tab-btn-visual');
+                    if (visBtn) visBtn.classList.add('active');
+                    switchResultTab('visual');
+                    
+                    window.history.pushState(null, "", "/candidate/MULTI");
+                    renderMultiCandidateView();
+                    
+                    document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+                    document.getElementById('page-result').classList.add('active');
+                    
+                } catch (e) {
+                    alert(`Parallel Ingestion Failed: ${e.message}`);
+                    navigateToHome();
+                }
+            } else {
+                // SINGLE MODE
+                const phases = [
+                    "Bootstrap", "Input Discovery", "Extraction", "Field Classification",
+                    "Normalization", "Entity Resolution", "Merge", "Confidence",
+                    "Provenance", "Business Rules", "Projection", "Validation", "Serialization"
+                ];
                 
-                document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-                document.getElementById('page-result').classList.add('active');
+                phases.forEach((phase, idx) => {
+                    const row = document.createElement('div');
+                    row.className = 'running-step';
+                    row.id = `step-row-${idx}`;
+                    row.innerHTML = `
+                        <span>⚙️ Phase ${idx}: ${phase}</span>
+                        <span class="step-status" id="step-status-${idx}">Waiting...</span>
+                    `;
+                    container.appendChild(row);
+                });
                 
-            } catch (e) {
-                clearInterval(animInterval);
-                alert(`Pipeline Ingestion Failed: ${e.message}`);
-                navigateToHome();
+                let progressIdx = 0;
+                animInterval = setInterval(() => {
+                    if (progressIdx < phases.length) {
+                        if (progressIdx > 0) {
+                            const prev = document.getElementById(`step-row-${progressIdx-1}`);
+                            prev.className = 'running-step completed';
+                            document.getElementById(`step-status-${progressIdx-1}`).innerText = 'Completed';
+                        }
+                        const curr = document.getElementById(`step-row-${progressIdx}`);
+                        curr.className = 'running-step active';
+                        document.getElementById(`step-status-${progressIdx}`).innerText = 'Running...';
+                        progressIdx++;
+                    } else {
+                        clearInterval(animInterval);
+                    }
+                }, 120);
+
+                const formData = new FormData();
+                formData.append('candidate_id', 'AUTO');
+                formData.append('csv_filename', uploadedCSV);
+                formData.append('resume_filename', uploadedResumes.join(','));
+                if (githubUrl) formData.append('github_url', githubUrl);
+                
+                try {
+                    const response = await fetch('/api/run', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (!response.ok) throw new Error("ETL Transformation Ingestion crashed.");
+                    const data = await response.json();
+                    pipelineResult = data;
+                    
+                    const resolvedCandId = data.projected_profile.candidate_id || 'AUTO';
+                    selectedCandidateId = resolvedCandId;
+                    processedCandidates[resolvedCandId] = data;
+                    
+                    const selector = document.getElementById('candidate-selector');
+                    selector.innerHTML = '';
+                    
+                    uploadedCandidates.forEach(cand => {
+                        const opt = document.createElement('option');
+                        opt.value = cand.candidate_id;
+                        opt.innerText = `${cand.candidate_id}: ${cand.name}`;
+                        if (cand.candidate_id === resolvedCandId) {
+                            opt.selected = true;
+                        }
+                        selector.appendChild(opt);
+                    });
+                    
+                    const optMulti = document.createElement('option');
+                    optMulti.value = 'MULTI';
+                    optMulti.innerText = 'Show All Candidates (Compare)';
+                    selector.appendChild(optMulti);
+                    
+                    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                    const visBtn = document.getElementById('tab-btn-visual');
+                    if (visBtn) visBtn.classList.add('active');
+                    switchResultTab('visual');
+                    
+                    if (animInterval) clearInterval(animInterval);
+                    window.history.pushState(null, "", "/candidate/" + resolvedCandId);
+                    renderResults(data);
+                    
+                    document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+                    document.getElementById('page-result').classList.add('active');
+                    
+                    preloadOtherCandidates(resolvedCandId);
+                } catch (e) {
+                    if (animInterval) clearInterval(animInterval);
+                    alert(`Pipeline Ingestion Failed: ${e.message}`);
+                    navigateToHome();
+                }
             }
         }
 
@@ -1667,6 +1956,242 @@
             if (s >= 0.85) return 'badge-success';
             if (s >= 0.60) return 'badge-warning';
             return 'badge-danger';
+        }
+
+        async function preloadOtherCandidates(initialCandId) {
+            const githubUrl = document.getElementById('github-url').value.trim();
+            
+            for (let cand of uploadedCandidates) {
+                const candId = cand.candidate_id;
+                if (candId === initialCandId) continue;
+                
+                // Fetch in background
+                const formData = new FormData();
+                formData.append('candidate_id', candId);
+                formData.append('csv_filename', uploadedCSV);
+                formData.append('resume_filename', uploadedResumes.join(','));
+                if (githubUrl) formData.append('github_url', githubUrl);
+                
+                fetch('/api/run', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    processedCandidates[candId] = data;
+                    // If the user is currently on the multi-candidate view, re-render it to show new data
+                    if (selectedCandidateId === 'MULTI') {
+                        renderMultiCandidateView();
+                    }
+                })
+                .catch(err => {
+                    console.error(`Failed to background-preload candidate ${candId}:`, err);
+                });
+            }
+        }
+
+        async function handleCandidateSelectionChange() {
+            const selector = document.getElementById('candidate-selector');
+            const val = selector.value;
+            selectedCandidateId = val;
+            
+            // Find currently active tab
+            let activeTab = 'visual';
+            const activeBtn = document.querySelector('.tab-btn.active');
+            if (activeBtn) {
+                activeTab = activeBtn.id.replace('tab-btn-', '');
+            }
+            
+            if (val === 'MULTI') {
+                window.history.pushState(null, "", "/candidate/MULTI");
+                switchResultTab(activeTab);
+                renderMultiCandidateView();
+            } else {
+                window.history.pushState(null, "", "/candidate/" + val);
+                
+                if (processedCandidates[val]) {
+                    pipelineResult = processedCandidates[val];
+                    renderResults(pipelineResult);
+                    switchResultTab(activeTab);
+                } else {
+                    showSingleLoadingState();
+                    document.getElementById('single-candidate-container').style.display = 'grid';
+                    document.getElementById('multi-candidate-container').style.display = 'none';
+                    
+                    const githubUrl = document.getElementById('github-url').value.trim();
+                    const formData = new FormData();
+                    formData.append('candidate_id', val);
+                    formData.append('csv_filename', uploadedCSV);
+                    formData.append('resume_filename', uploadedResumes.join(','));
+                    if (githubUrl) formData.append('github_url', githubUrl);
+                    
+                    try {
+                        const res = await fetch('/api/run', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await res.json();
+                        processedCandidates[val] = data;
+                        
+                        if (selectedCandidateId === val) {
+                            pipelineResult = data;
+                            renderResults(data);
+                            switchResultTab(activeTab);
+                        }
+                    } catch (err) {
+                        alert(`Failed to load profile for ${val}: ${err.message}`);
+                        selector.value = Object.keys(processedCandidates)[0] || '';
+                        handleCandidateSelectionChange();
+                    }
+                }
+            }
+        }
+
+        function showSingleLoadingState() {
+            document.getElementById('result-cand-name').innerText = "Loading Candidate Profile...";
+            document.getElementById('result-cand-id').innerText = "ID: Loading...";
+            document.getElementById('result-overall-confidence-badge').innerText = "Score: --";
+            document.getElementById('sec1-agg-score').innerText = "--";
+            document.getElementById('sec1-val-status').innerText = "LOADING";
+            document.getElementById('sec1-val-status').className = "badge badge-warning";
+        }
+
+        function renderMultiCandidateView() {
+            const dashboard = document.getElementById('multi-comparison-dashboard');
+            const loading = document.getElementById('multi-loading-indicator');
+            
+            const loadedKeys = Object.keys(processedCandidates);
+            const totalToLoad = uploadedCandidates.length;
+            
+            if (loadedKeys.length === 0) {
+                loading.style.display = 'block';
+                dashboard.style.display = 'none';
+                return;
+            }
+            
+            loading.style.display = 'none';
+            dashboard.style.display = 'flex';
+            
+            // Render Table
+            const tbody = document.querySelector('#sec12-comparison-table tbody');
+            tbody.innerHTML = '';
+            
+            loadedKeys.forEach(key => {
+                const res = processedCandidates[key];
+                const profile = res.projected_profile;
+                const report = res.pipeline_report;
+                const overallConf = profile.overall_confidence || 0.0;
+                const overallConfClass = getConfidenceClass(overallConf);
+                const isValValid = report.validation_report && report.validation_report.is_valid;
+                
+                const emailStr = profile.emails && profile.emails.length > 0 
+                    ? (typeof profile.emails[0] === 'object' ? profile.emails[0].value : profile.emails[0])
+                    : 'N/A';
+                const phoneStr = profile.phones && profile.phones.length > 0 
+                    ? (typeof profile.phones[0] === 'object' ? profile.phones[0].value : profile.phones[0])
+                    : 'N/A';
+                
+                const locCity = (profile.location && profile.location.city) || '';
+                const locCountry = (profile.location && profile.location.country) || '';
+                const locStr = [locCity, locCountry].filter(Boolean).join(', ') || 'N/A';
+                
+                const expYears = profile.years_experience !== null ? `${profile.years_experience} yrs` : 'N/A';
+                
+                const skillsList = profile.skills && profile.skills.length > 0
+                    ? profile.skills.slice(0, 4).map(s => typeof s === 'object' ? s.name : s).join(', ')
+                    : 'N/A';
+                
+                tbody.innerHTML += `
+                    <tr style="border-bottom: 1px solid var(--card-border);">
+                        <td style="padding: 12px; font-weight: bold; color: var(--primary-light);">${profile.candidate_id || key}</td>
+                        <td style="padding: 12px; font-weight: 700;">${profile.full_name || 'N/A'}</td>
+                        <td style="padding: 12px; color: var(--text-muted);">${emailStr}</td>
+                        <td style="padding: 12px; color: var(--text-muted);">${phoneStr}</td>
+                        <td style="padding: 12px;">${locStr}</td>
+                        <td style="padding: 12px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${profile.headline || ''}">${profile.headline || 'N/A'}</td>
+                        <td style="padding: 12px; text-align: center; font-weight: 600;">${expYears}</td>
+                        <td style="padding: 12px; color: var(--primary-light);">${skillsList}</td>
+                        <td style="padding: 12px; text-align: center;"><span class="badge ${overallConfClass}">${(overallConf).toFixed(2)}</span></td>
+                        <td style="padding: 12px; text-align: center;"><span class="badge ${isValValid ? 'badge-success' : 'badge-warning'}">${isValValid ? 'VALID' : 'WARNING'}</span></td>
+                    </tr>
+                `;
+            });
+            
+            // If some candidates are still preloading, show a message
+            if (loadedKeys.length < totalToLoad) {
+                tbody.innerHTML += `
+                    <tr>
+                        <td colspan="10" style="padding: 16px; text-align: center; color: var(--text-muted); font-style: italic; background: rgba(109, 40, 217, 0.02);">
+                            ⏳ Preloading and syncing remaining profiles (${loadedKeys.length}/${totalToLoad} loaded)...
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            // Render Cards
+            const cardsContainer = document.getElementById('multi-cards-container');
+            cardsContainer.innerHTML = '';
+            
+            loadedKeys.forEach(key => {
+                const res = processedCandidates[key];
+                const profile = res.projected_profile;
+                const overallConf = profile.overall_confidence || 0.0;
+                const overallConfClass = getConfidenceClass(overallConf);
+                
+                const skillsBadges = profile.skills && profile.skills.length > 0
+                    ? profile.skills.slice(0, 6).map(s => `<span class="config-chip" style="margin: 2px;">${typeof s === 'object' ? s.name : s}</span>`).join('')
+                    : '<span style="color: var(--text-muted); font-size:12px;">No skills listed</span>';
+                
+                const emailStr = profile.emails && profile.emails.length > 0 
+                    ? (typeof profile.emails[0] === 'object' ? profile.emails[0].value : profile.emails[0])
+                    : 'N/A';
+                const phoneStr = profile.phones && profile.phones.length > 0 
+                    ? (typeof profile.phones[0] === 'object' ? profile.phones[0].value : profile.phones[0])
+                    : 'N/A';
+                
+                cardsContainer.innerHTML += `
+                    <div class="feature-card" style="display: flex; flex-direction: column; gap: 14px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; position: relative; backdrop-filter: blur(8px);">
+                        <!-- Avatar + Headline -->
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-light)); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: white;">
+                                ${profile.full_name ? profile.full_name[0] : '👤'}
+                            </div>
+                            <div style="flex-grow: 1; min-width: 0;">
+                                <h4 style="font-weight: 700; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${profile.full_name || 'N/A'}</h4>
+                                <div style="font-size: 11px; color: var(--primary-light); font-weight: bold; margin-top: 2px;">ID: ${profile.candidate_id || key}</div>
+                            </div>
+                            <span class="badge ${overallConfClass}" style="align-self: flex-start;">${overallConf.toFixed(2)}</span>
+                        </div>
+                        
+                        <!-- Details -->
+                        <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 34px;">
+                            ${profile.headline || 'No professional headline available.'}
+                        </p>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; border-top: 1px solid rgba(109, 40, 217, 0.1); padding-top: 10px;">
+                            <div>📧 <strong>Email:</strong> <span style="color: var(--text-muted);">${emailStr}</span></div>
+                            <div>📞 <strong>Phone:</strong> <span style="color: var(--text-muted);">${phoneStr}</span></div>
+                            <div>💼 <strong>Experience:</strong> <span style="color: var(--text-muted); font-weight: bold;">${profile.years_experience !== null ? `${profile.years_experience} years` : 'N/A'}</span></div>
+                        </div>
+                        
+                        <!-- Skills -->
+                        <div style="flex-grow: 1; display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px;">
+                            ${skillsBadges}
+                        </div>
+                        
+                        <!-- Footer switch button -->
+                        <button class="btn-panel-action" style="margin-top: 10px; width: 100%; text-align: center; justify-content: center; font-size: 12px; padding: 6px;" onclick="selectIndividualCandidate('${key}')">
+                            🔍 View Detailed Profile
+                        </button>
+                    </div>
+                `;
+            });
+        }
+        
+        function selectIndividualCandidate(candId) {
+            const selector = document.getElementById('candidate-selector');
+            selector.value = candId;
+            handleCandidateSelectionChange();
         }
 
         // SECTION 8: Provenance Table Helpers
@@ -2226,12 +2751,68 @@
 
         function switchResultTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            const clickedBtn = document.getElementById(`tab-btn-${tabName}`);
+            if (clickedBtn) clickedBtn.classList.add('active');
+            
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
+                content.style.display = 'none';
             });
             
-            document.getElementById(`tab-btn-${tabName}`).classList.add('active');
-            document.getElementById(`tab-content-${tabName}`).classList.add('active');
+            if (selectedCandidateId === 'MULTI') {
+                document.getElementById('single-candidate-container').style.display = 'none';
+                document.getElementById('multi-candidate-container').style.display = 'flex';
+                
+                const activeContent = document.getElementById(`multi-tab-content-${tabName}`);
+                if (activeContent) {
+                    activeContent.classList.add('active');
+                    activeContent.style.display = 'block';
+                }
+                
+                if (tabName === 'json') {
+                    const allProjected = Object.keys(processedCandidates).map(k => processedCandidates[k].projected_profile);
+                    document.getElementById('projected-live-json-multi').innerText = JSON.stringify(allProjected, null, 2);
+                } else if (tabName === 'tree') {
+                    const allProjected = Object.keys(processedCandidates).map(k => processedCandidates[k].projected_profile);
+                    renderTreeView(allProjected, document.getElementById('tree-view-container-multi'));
+                }
+            } else {
+                document.getElementById('single-candidate-container').style.display = 'grid';
+                document.getElementById('multi-candidate-container').style.display = 'none';
+                
+                const activeContent = document.getElementById(`single-tab-content-${tabName}`);
+                if (activeContent) {
+                    activeContent.classList.add('active');
+                    activeContent.style.display = 'block';
+                }
+                
+                if (tabName === 'json' && pipelineResult) {
+                    document.getElementById('projected-live-json').innerText = JSON.stringify(pipelineResult.projected_profile, null, 2);
+                } else if (tabName === 'tree' && pipelineResult) {
+                    renderTreeView(pipelineResult.projected_profile, document.getElementById('tree-view-container'));
+                }
+            }
+        }
+
+        function copyMultiProjectedJSON() {
+            const el = document.getElementById('projected-live-json-multi');
+            if (el) {
+                navigator.clipboard.writeText(el.innerText);
+                alert("Merged JSON copied to clipboard!");
+            }
+        }
+
+        function downloadMultiProjectedJSON() {
+            const el = document.getElementById('projected-live-json-multi');
+            if (el) {
+                const blob = new Blob([el.innerText], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `candidates_profiles_${Date.now()}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
         }
 
         function renderTreeView(obj, container) {
@@ -2458,6 +3039,38 @@
 
             } catch (e) {
                 console.error("Live configuration projection failed:", e);
+            }
+        }
+
+        // Listen for history navigation (back/forward)
+        window.addEventListener('popstate', handleUrlNavigation);
+        window.addEventListener('load', handleUrlNavigation);
+
+        function handleUrlNavigation() {
+            const path = window.location.pathname;
+            if (path.startsWith('/candidate/')) {
+                const candId = path.split('/').pop();
+                if (candId === 'MULTI') {
+                    showResultsPageWithCandidate('MULTI');
+                } else if (candId) {
+                    showResultsPageWithCandidate(candId);
+                }
+            }
+        }
+
+        function showResultsPageWithCandidate(candId) {
+            if (!uploadedCSV) {
+                navigateToHome();
+                return;
+            }
+            
+            document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+            document.getElementById('page-result').classList.add('active');
+            
+            const selector = document.getElementById('candidate-selector');
+            if (selector) {
+                selector.value = candId;
+                handleCandidateSelectionChange();
             }
         }
     </script>

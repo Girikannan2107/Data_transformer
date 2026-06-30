@@ -1,14 +1,183 @@
 {
-  "candidate_id": "CAND-8832",
-  "full_name": null,
-  "location": null,
-  "links": null,
-  "headline": null,
+  "candidate_id": "CAND-103",
+  "full_name": {
+    "raw_value": "Anitharani S",
+    "canonical_value": null,
+    "value": "Anitharani S",
+    "confidence": 0.0,
+    "provenance": {
+      "field": "full_name",
+      "source": "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv",
+      "method": "CSV_DictReader",
+      "confidence": 0.9,
+      "normalization_applied": [],
+      "confidence_evolution": [],
+      "agreement_count": 1,
+      "supporting_sources": [],
+      "rejected_sources": [],
+      "timestamp": "2026-06-30T12:51:00.173708",
+      "merge_decision": null
+    },
+    "validation_status": "PENDING"
+  },
+  "location": {
+    "raw_value": {
+      "city": "coimabatore",
+      "region": null,
+      "country": null
+    },
+    "canonical_value": null,
+    "value": {
+      "city": "coimabatore",
+      "region": null,
+      "country": null
+    },
+    "confidence": 0.0,
+    "provenance": {
+      "field": "location",
+      "source": "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv",
+      "method": "CSV_DictReader",
+      "confidence": 0.9,
+      "normalization_applied": [],
+      "confidence_evolution": [],
+      "agreement_count": 1,
+      "supporting_sources": [],
+      "rejected_sources": [],
+      "timestamp": "2026-06-30T12:51:00.173708",
+      "merge_decision": null
+    },
+    "validation_status": "PENDING"
+  },
+  "links": {
+    "raw_value": {
+      "linkedin": null,
+      "github": "https://github.com/Anitharani205",
+      "portfolio": null,
+      "other": []
+    },
+    "canonical_value": null,
+    "value": {
+      "linkedin": null,
+      "github": "https://github.com/Anitharani205",
+      "portfolio": null,
+      "other": []
+    },
+    "confidence": 0.0,
+    "provenance": {
+      "field": "links",
+      "source": "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv",
+      "method": "CSV_DictReader",
+      "confidence": 0.9,
+      "normalization_applied": [],
+      "confidence_evolution": [],
+      "agreement_count": 1,
+      "supporting_sources": [],
+      "rejected_sources": [],
+      "timestamp": "2026-06-30T12:51:00.173708",
+      "merge_decision": null
+    },
+    "validation_status": "PENDING"
+  },
+  "headline": {
+    "raw_value": "web developer",
+    "canonical_value": null,
+    "value": "web developer",
+    "confidence": 0.0,
+    "provenance": {
+      "field": "headline",
+      "source": "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv",
+      "method": "CSV_DictReader",
+      "confidence": 0.9,
+      "normalization_applied": [],
+      "confidence_evolution": [],
+      "agreement_count": 1,
+      "supporting_sources": [],
+      "rejected_sources": [],
+      "timestamp": "2026-06-30T12:51:00.173708",
+      "merge_decision": null
+    },
+    "validation_status": "PENDING"
+  },
   "years_experience": null,
   "emails": [],
-  "phones": [],
-  "skills": [],
-  "experience": [],
+  "phones": [
+    {
+      "raw_value": "7604833064",
+      "canonical_value": null,
+      "value": "7604833064",
+      "confidence": 0.0,
+      "provenance": {
+        "field": "phones",
+        "source": "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv",
+        "method": "CSV_DictReader",
+        "confidence": 0.9,
+        "normalization_applied": [],
+        "confidence_evolution": [],
+        "agreement_count": 1,
+        "supporting_sources": [],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:51:00.173708",
+        "merge_decision": null
+      },
+      "validation_status": "PENDING"
+    }
+  ],
+  "skills": [
+    {
+      "raw_value": "React.js,HTML,CSS,JavaScript",
+      "canonical_value": null,
+      "value": "React.js,HTML,CSS,JavaScript",
+      "confidence": 0.0,
+      "provenance": {
+        "field": "skills",
+        "source": "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv",
+        "method": "CSV_DictReader",
+        "confidence": 0.9,
+        "normalization_applied": [],
+        "confidence_evolution": [],
+        "agreement_count": 1,
+        "supporting_sources": [],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:51:00.173708",
+        "merge_decision": null
+      },
+      "validation_status": "PENDING"
+    }
+  ],
+  "experience": [
+    {
+      "raw_value": {
+        "company": "Web Development Intern,INTERNPE",
+        "title": "Web Developer",
+        "start": null,
+        "end": null,
+        "summary": null
+      },
+      "canonical_value": null,
+      "value": {
+        "company": "Web Development Intern,INTERNPE",
+        "title": "Web Developer",
+        "start": null,
+        "end": null,
+        "summary": null
+      },
+      "confidence": 0.0,
+      "provenance": {
+        "field": "experience",
+        "source": "CSV:D:\\EightFoldAI\\candidate-transformer\\data\\uploads\\runs\\run_74dde253\\recruiter.csv",
+        "method": "CSV_DictReader",
+        "confidence": 0.9,
+        "normalization_applied": [],
+        "confidence_evolution": [],
+        "agreement_count": 1,
+        "supporting_sources": [],
+        "rejected_sources": [],
+        "timestamp": "2026-06-30T12:51:00.173708",
+        "merge_decision": null
+      },
+      "validation_status": "PENDING"
+    }
+  ],
   "education": [],
   "overall_confidence": 0.0
 }
